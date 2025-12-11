@@ -1,0 +1,170 @@
+DEFAULT 2025-07-21T19:07:34.583110Z [Symbol(alpncallback)]: null,
+DEFAULT 2025-07-21T19:07:34.583112Z [Symbol(res)]: [TLSWrap],
+DEFAULT 2025-07-21T19:07:34.583114Z [Symbol(verified)]: true,
+DEFAULT 2025-07-21T19:07:34.583116Z [Symbol(pendingSession)]: null,
+DEFAULT 2025-07-21T19:07:34.583118Z [Symbol(async_id_symbol)]: -1,
+DEFAULT 2025-07-21T19:07:34.583120Z [Symbol(kHandle)]: [TLSWrap],
+DEFAULT 2025-07-21T19:07:34.583122Z [Symbol(lastWriteQueueSize)]: 0,
+DEFAULT 2025-07-21T19:07:34.583124Z [Symbol(timeout)]: Timeout {
+DEFAULT 2025-07-21T19:07:34.583125Z _idleTimeout: 5000,
+DEFAULT 2025-07-21T19:07:34.583127Z _idlePrev: [TimersList],
+DEFAULT 2025-07-21T19:07:34.583129Z _idleNext: [TimersList],
+DEFAULT 2025-07-21T19:07:34.583131Z _idleStart: 3214,
+DEFAULT 2025-07-21T19:07:34.583133Z _onTimeout: [Function: bound ],
+DEFAULT 2025-07-21T19:07:34.583135Z _timerArgs: undefined,
+DEFAULT 2025-07-21T19:07:34.583138Z _repeat: null,
+DEFAULT 2025-07-21T19:07:34.583141Z _destroyed: false,
+DEFAULT 2025-07-21T19:07:34.583142Z [Symbol(refed)]: false,
+DEFAULT 2025-07-21T19:07:34.583144Z [Symbol(kHasPrimitive)]: false,
+DEFAULT 2025-07-21T19:07:34.583146Z [Symbol(asyncId)]: 87,
+DEFAULT 2025-07-21T19:07:34.583148Z [Symbol(triggerId)]: 85,
+DEFAULT 2025-07-21T19:07:34.583150Z [Symbol(kAsyncContextFrame)]: undefined
+DEFAULT 2025-07-21T19:07:34.583152Z },
+DEFAULT 2025-07-21T19:07:34.583154Z [Symbol(kBuffer)]: null,
+DEFAULT 2025-07-21T19:07:34.583156Z [Symbol(kBufferCb)]: null,
+DEFAULT 2025-07-21T19:07:34.583158Z [Symbol(kBufferGen)]: null,
+DEFAULT 2025-07-21T19:07:34.583160Z [Symbol(shapeMode)]: true,
+DEFAULT 2025-07-21T19:07:34.583162Z [Symbol(kCapture)]: false,
+DEFAULT 2025-07-21T19:07:34.583164Z [Symbol(kSetNoDelay)]: false,
+DEFAULT 2025-07-21T19:07:34.583165Z [Symbol(kSetKeepAlive)]: true,
+DEFAULT 2025-07-21T19:07:34.583167Z [Symbol(kSetKeepAliveInitialDelay)]: 1,
+DEFAULT 2025-07-21T19:07:34.583169Z [Symbol(kBytesRead)]: 0,
+DEFAULT 2025-07-21T19:07:34.583171Z [Symbol(kBytesWritten)]: 0,
+DEFAULT 2025-07-21T19:07:34.583173Z [Symbol(connect-options)]: [Object]
+DEFAULT 2025-07-21T19:07:34.583175Z },
+DEFAULT 2025-07-21T19:07:34.583176Z [Symbol(kOutHeaders)]: [Object: null prototype] {
+DEFAULT 2025-07-21T19:07:34.583274Z accept: [Array],
+DEFAULT 2025-07-21T19:07:34.583276Z 'content-type': [Array],
+DEFAULT 2025-07-21T19:07:34.583278Z 'user-agent': [Array],
+DEFAULT 2025-07-21T19:07:34.583280Z 'content-length': [Array],
+DEFAULT 2025-07-21T19:07:34.583282Z 'accept-encoding': [Array],
+DEFAULT 2025-07-21T19:07:34.583284Z host: [Array]
+DEFAULT 2025-07-21T19:07:34.583286Z },
+DEFAULT 2025-07-21T19:07:34.583288Z [Symbol(errored)]: null,
+DEFAULT 2025-07-21T19:07:34.583289Z [Symbol(kHighWaterMark)]: 65536,
+DEFAULT 2025-07-21T19:07:34.583291Z [Symbol(kRejectNonStandardBodyWrites)]: false,
+DEFAULT 2025-07-21T19:07:34.583293Z [Symbol(kUniqueHeaders)]: null
+DEFAULT 2025-07-21T19:07:34.583295Z },
+DEFAULT 2025-07-21T19:07:34.583297Z response: {
+DEFAULT 2025-07-21T19:07:34.583299Z status: 500,
+DEFAULT 2025-07-21T19:07:34.583303Z statusText: 'Internal Server Error',
+DEFAULT 2025-07-21T19:07:34.583305Z headers: Object [AxiosHeaders] {
+DEFAULT 2025-07-21T19:07:34.583307Z 'x-powered-by': 'Express',
+DEFAULT 2025-07-21T19:07:34.583308Z 'content-type': 'text/html; charset=utf-8',
+DEFAULT 2025-07-21T19:07:34.583310Z etag: 'W/"17c-eEKUbcklURVU0gJ70fwlBiKptow"',
+DEFAULT 2025-07-21T19:07:34.583312Z 'x-cloud-trace-context': 'af91cfdc0221f3e6109bd6e75e91df8d;o=1',
+DEFAULT 2025-07-21T19:07:34.583314Z date: 'Mon, 21 Jul 2025 19:07:34 GMT',
+DEFAULT 2025-07-21T19:07:34.583316Z server: 'Google Frontend',
+DEFAULT 2025-07-21T19:07:34.583318Z 'content-length': '380',
+DEFAULT 2025-07-21T19:07:34.583320Z 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'
+DEFAULT 2025-07-21T19:07:34.583321Z },
+DEFAULT 2025-07-21T19:07:34.583323Z config: {
+DEFAULT 2025-07-21T19:07:34.583325Z transitional: [Object],
+DEFAULT 2025-07-21T19:07:34.583327Z adapter: [Array],
+DEFAULT 2025-07-21T19:07:34.583329Z transformRequest: [Array],
+DEFAULT 2025-07-21T19:07:34.583330Z transformResponse: [Array],
+DEFAULT 2025-07-21T19:07:34.583333Z timeout: 0,
+DEFAULT 2025-07-21T19:07:34.583335Z xsrfCookieName: 'XSRF-TOKEN',
+DEFAULT 2025-07-21T19:07:34.583336Z xsrfHeaderName: 'X-XSRF-TOKEN',
+DEFAULT 2025-07-21T19:07:34.583339Z maxContentLength: -1,
+DEFAULT 2025-07-21T19:07:34.583340Z maxBodyLength: -1,
+DEFAULT 2025-07-21T19:07:34.583342Z env: [Object],
+DEFAULT 2025-07-21T19:07:34.583344Z validateStatus: [Function: validateStatus],
+DEFAULT 2025-07-21T19:07:34.583346Z headers: [Object [AxiosHeaders]],
+DEFAULT 2025-07-21T19:07:34.583348Z responseType: 'arraybuffer',
+DEFAULT 2025-07-21T19:07:34.583350Z method: 'post',
+DEFAULT 2025-07-21T19:07:34.583351Z url: 'https://pdf-generator-sjeqewp5lq-an.a.run.app',
+DEFAULT 2025-07-21T19:07:34.583375Z data: `{"html":"\\n <!DOCTYPE html>\\n <html lang=\\"ja\\">\\n <head>\\n <meta charset=\\"UTF-8\\">\\n <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">\\n <title>財務レポート分析結果</title>\\n <style>\\n * { margin: 0; padding: 0; box-sizing: border-box; }\\n body { font-family: 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif; line-height: 1.6; color: #333; background: #fff; }\\n .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }\\n .header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #2563eb; }\\n .header h1 { font-size: 28px; color: #1e40af; margin-bottom: 10px; }\\n .header .subtitle { font-size: 14px; color: #6b7280; }\\n .header .date { font-size: 12px; color: #9ca3af; margin-top: 10px; }\\n .statistics { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 25px; border-radius: 12px; margin-bottom: 40px; border: 1px solid #e2e8f0; }\\n .statistics h2 { font-size: 20px; color: #1e40af; margin-bottom: 20px; display: flex; align-items: center; }\\n .statistics h2::before { content: \\"📊\\"; margin-right: 8px; }\\n .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }\\n .stat-item { background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }\\n .stat-item .label { font-size: 12px; color: #6b7280; margin-bottom: 5px; }\\n .stat-item .value { font-size: 18px; font-weight: bold; color: #1f2937; }\\n .category-section { margin-bottom: 40px; break-inside: avoid; }\\n .category-header { display: flex; align-items: center; margin-bottom: 20px; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 18px; }\\n .category-header.calculation-error { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); color: #dc2626; border-left: 5px solid #dc2626; }\\n .category-header.trend-error { background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%); color: #ea580c; border-left: 5px solid #ea580c; }\\n .category-header.fact-error { background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%); color: #d97706; border-left: 5px solid #d97706; }\\n .category-header.missing-ite…
+DEFAULT 2025-07-21T19:07:34.583377Z allowAbsoluteUrls: true
+DEFAULT 2025-07-21T19:07:34.583379Z },
+DEFAULT 2025-07-21T19:07:34.583384Z request: <ref *1> ClientRequest {
+DEFAULT 2025-07-21T19:07:34.583397Z _events: [Object: null prototype],
+DEFAULT 2025-07-21T19:07:34.583399Z _eventsCount: 7,
+DEFAULT 2025-07-21T19:07:34.583401Z _maxListeners: undefined,
+DEFAULT 2025-07-21T19:07:34.583403Z outputData: [],
+DEFAULT 2025-07-21T19:07:34.583405Z outputSize: 0,
+DEFAULT 2025-07-21T19:07:34.583407Z writable: true,
+DEFAULT 2025-07-21T19:07:34.583409Z destroyed: true,
+DEFAULT 2025-07-21T19:07:34.583411Z _last: false,
+DEFAULT 2025-07-21T19:07:34.583414Z chunkedEncoding: false,
+DEFAULT 2025-07-21T19:07:34.583415Z shouldKeepAlive: true,
+DEFAULT 2025-07-21T19:07:34.583417Z maxRequestsOnConnectionReached: false,
+DEFAULT 2025-07-21T19:07:34.583419Z _defaultKeepAlive: true,
+DEFAULT 2025-07-21T19:07:34.583421Z useChunkedEncodingByDefault: true,
+DEFAULT 2025-07-21T19:07:34.583423Z sendDate: false,
+DEFAULT 2025-07-21T19:07:34.583499Z _removedConnection: false,
+DEFAULT 2025-07-21T19:07:34.583501Z _removedContLen: false,
+DEFAULT 2025-07-21T19:07:34.583503Z _removedTE: false,
+DEFAULT 2025-07-21T19:07:34.583505Z strictContentLength: false,
+DEFAULT 2025-07-21T19:07:34.583507Z _contentLength: 13023,
+DEFAULT 2025-07-21T19:07:34.583508Z _hasBody: true,
+DEFAULT 2025-07-21T19:07:34.583510Z _trailer: '',
+DEFAULT 2025-07-21T19:07:34.583512Z finished: true,
+DEFAULT 2025-07-21T19:07:34.583514Z _headerSent: true,
+DEFAULT 2025-07-21T19:07:34.583516Z _closed: true,
+DEFAULT 2025-07-21T19:07:34.583518Z _header: 'POST / HTTP/1.1\r\n' +
+DEFAULT 2025-07-21T19:07:34.583520Z 'Accept: application/json, text/plain, */*\r\n' +
+DEFAULT 2025-07-21T19:07:34.583522Z 'Content-Type: application/json\r\n' +
+DEFAULT 2025-07-21T19:07:34.583524Z 'User-Agent: axios/1.10.0\r\n' +
+DEFAULT 2025-07-21T19:07:34.583525Z 'Content-Length: 13023\r\n' +
+DEFAULT 2025-07-21T19:07:34.583527Z 'Accept-Encoding: gzip, compress, deflate, br\r\n' +
+DEFAULT 2025-07-21T19:07:34.583529Z 'Host: pdf-generator-sjeqewp5lq-an.a.run.app\r\n' +
+DEFAULT 2025-07-21T19:07:34.583531Z 'Connection: keep-alive\r\n' +
+DEFAULT 2025-07-21T19:07:34.583533Z '\r\n',
+DEFAULT 2025-07-21T19:07:34.583535Z _keepAliveTimeout: 0,
+DEFAULT 2025-07-21T19:07:34.583537Z _onPendingData: [Function: nop],
+DEFAULT 2025-07-21T19:07:34.583538Z agent: [Agent],
+DEFAULT 2025-07-21T19:07:34.583541Z socketPath: undefined,
+DEFAULT 2025-07-21T19:07:34.583542Z method: 'POST',
+DEFAULT 2025-07-21T19:07:34.583545Z maxHeaderSize: undefined,
+DEFAULT 2025-07-21T19:07:34.583547Z insecureHTTPParser: undefined,
+DEFAULT 2025-07-21T19:07:34.583549Z joinDuplicateHeaders: undefined,
+DEFAULT 2025-07-21T19:07:34.583550Z path: '/',
+DEFAULT 2025-07-21T19:07:34.583552Z _ended: true,
+DEFAULT 2025-07-21T19:07:34.583554Z res: [IncomingMessage],
+DEFAULT 2025-07-21T19:07:34.583555Z aborted: false,
+DEFAULT 2025-07-21T19:07:34.583557Z timeoutCb: null,
+DEFAULT 2025-07-21T19:07:34.583559Z upgradeOrConnect: false,
+DEFAULT 2025-07-21T19:07:34.583561Z parser: null,
+DEFAULT 2025-07-21T19:07:34.583563Z maxHeadersCount: null,
+DEFAULT 2025-07-21T19:07:34.583564Z reusedSocket: false,
+DEFAULT 2025-07-21T19:07:34.583566Z host: 'pdf-generator-sjeqewp5lq-an.a.run.app',
+DEFAULT 2025-07-21T19:07:34.583568Z protocol: 'https:',
+DEFAULT 2025-07-21T19:07:34.583570Z _redirectable: [Writable],
+DEFAULT 2025-07-21T19:07:34.583572Z [Symbol(shapeMode)]: false,
+DEFAULT 2025-07-21T19:07:34.583574Z [Symbol(kCapture)]: false,
+DEFAULT 2025-07-21T19:07:34.583576Z [Symbol(kBytesWritten)]: 0,
+DEFAULT 2025-07-21T19:07:34.583578Z [Symbol(kNeedDrain)]: false,
+DEFAULT 2025-07-21T19:07:34.583580Z [Symbol(corked)]: 0,
+DEFAULT 2025-07-21T19:07:34.583582Z [Symbol(kChunkedBuffer)]: [],
+DEFAULT 2025-07-21T19:07:34.583584Z [Symbol(kChunkedLength)]: 0,
+DEFAULT 2025-07-21T19:07:34.583585Z [Symbol(kSocket)]: [TLSSocket],
+DEFAULT 2025-07-21T19:07:34.583587Z [Symbol(kOutHeaders)]: [Object: null prototype],
+DEFAULT 2025-07-21T19:07:34.583589Z [Symbol(errored)]: null,
+DEFAULT 2025-07-21T19:07:34.583591Z [Symbol(kHighWaterMark)]: 65536,
+DEFAULT 2025-07-21T19:07:34.583593Z [Symbol(kRejectNonStandardBodyWrites)]: false,
+DEFAULT 2025-07-21T19:07:34.583595Z [Symbol(kUniqueHeaders)]: null
+DEFAULT 2025-07-21T19:07:34.583597Z },
+DEFAULT 2025-07-21T19:07:34.583599Z data: <Buffer 49 6e 74 65 72 6e 61 6c 20 53 65 72 76 65 72 20 45 72 72 6f 72 3a 20 43 6f 75 6c 64 20 6e 6f 74 20 66 69 6e 64 20 43 68 72 6f 6d 65 20 28 76 65 72 2e ... 330 more bytes>
+DEFAULT 2025-07-21T19:07:34.583601Z },
+DEFAULT 2025-07-21T19:07:34.583603Z status: 500
+DEFAULT 2025-07-21T19:07:34.583604Z }
+DEFAULT 2025-07-21T19:07:34.583610Z Error from PDF Generator: Internal Server Error: Could not find Chrome (ver. 127.0.6533.88). This can occur if either
+DEFAULT 2025-07-21T19:07:34.583612Z 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install chrome`) or
+DEFAULT 2025-07-21T19:07:34.583679Z 2. your cache path is incorrectly configured (which is: /.puppeteer_cache).
+DEFAULT 2025-07-21T19:07:34.583681Z For (2), check out our guide on configuring puppeteer at https://pptr.dev/guides/configuration.
+DEFAULT 2025-07-21T19:07:34.583685Z PDF エクスポートエラー: Error: PDF Generator failed: Internal Server Error: Could not find Chrome (ver. 127.0.6533.88). This can occur if either
+DEFAULT 2025-07-21T19:07:34.583687Z 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install chrome`) or
+DEFAULT 2025-07-21T19:07:34.583689Z 2. your cache path is incorrectly configured (which is: /.puppeteer_cache).
+DEFAULT 2025-07-21T19:07:34.583690Z For (2), check out our guide on configuring puppeteer at https://pptr.dev/guides/configuration.
+DEFAULT 2025-07-21T19:07:34.583692Z at PDFExportService.exportToPDF (/workspace/dist/services/pdf-export.service.js:166:23)
+DEFAULT 2025-07-21T19:07:34.583694Z at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+DEFAULT 2025-07-21T19:07:34.583697Z at async /workspace/dist/api/export/export.routes.js:22:27
+
+
+2025-07-22 04:07:33.393 JST
+POST500573 B1.1 saxios/1.10.0 https://pdf-generator-sjeqewp5lq-an.a.run.app/
+2025-07-22 04:07:34.531 JST
+Default STARTUP TCP probe succeeded after 1 attempt for container "worker" on port 8080.
+2025-07-22 04:07:34.559 JST
+PDF generation failed: Error: Could not find Chrome (ver. 127.0.6533.88). This can occur if either 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install

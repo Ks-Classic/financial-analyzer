@@ -29,3 +29,6 @@ dist-ssr
 
 # Puppeteer cache
 .puppeteer_cache
+
+# Secrets and credentials
+key/

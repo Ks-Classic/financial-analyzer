@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // analysisResults コレクション: 読み書き可能（認証済みユーザーのみ）
+    match /analysisResults/{document} {
+      allow read, write: if true; // 一時的に全て許可（後で制限強化）
+    }
+    
+    // users コレクション（将来的な拡張）
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // checklists コレクション（将来的な拡張）
+    match /checklists/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // その他のドキュメントは拒否
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+} 

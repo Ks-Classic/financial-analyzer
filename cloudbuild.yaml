@@ -1,0 +1,39 @@
+steps:
+# 1. Build the container image
+# This step explicitly tells Docker to:
+# - Use the Dockerfile located at 'apps/backend/Dockerfile'
+# - Use the 'apps/backend' directory as the source code context
+# - Tag the resulting image for Google Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '-f'
+  - 'apps/backend/Dockerfile'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/ai-financial-analyzer-backend'
+  - 'apps/backend'
+
+# 2. Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/ai-financial-analyzer-backend']
+
+# 3. Deploy the container image to Cloud Run
+- name: 'gcr.io/cloud-builders/gcloud'
+  args:
+  - 'run'
+  - 'deploy'
+  - 'ai-financial-analyzer-backend'
+  - '--image=gcr.io/$PROJECT_ID/ai-financial-analyzer-backend'
+  - '--platform=managed'
+  - '--region=asia-northeast1'
+  - '--allow-unauthenticated'
+  - '--port=8080'
+  - '--memory=2Gi'
+  - '--cpu=2'
+  - '--max-instances=10'
+  - '--timeout=3600'
+  - '--set-env-vars=NODE_ENV=production,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,DOCUMENT_AI_LOCATION=us,PDF_GENERATOR_URL=https://pdf-generator-sjeqewp5lq-an.a.run.app'
+  - '--set-secrets=GEMINI_API_KEY=GEMINI_API_KEY:latest,DOCUMENT_AI_PROCESSOR_ID=DOCUMENT_AI_PROCESSOR_ID:latest,GOOGLE_APPLICATION_CREDENTIALS=google-application-credentials:latest'
+
+images:
+- 'gcr.io/$PROJECT_ID/ai-financial-analyzer-backend'
