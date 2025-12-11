@@ -1,0 +1,14 @@
+# Ignore node_modules
+**/node_modules
+
+# Ignore local development artifacts
+.git
+.env*
+*.log
+backend_log.txt
+
+# Ignore Puppeteer's local cache
+.puppeteer_cache
+
+# Ignore temporary files
+apps/backend/temp

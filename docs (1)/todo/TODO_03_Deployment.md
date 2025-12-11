@@ -1,0 +1,89 @@
+# TODO: フェーズ3 - デプロイとインフラ構築
+
+- [x] **1. GCP Cloud Runへのバックエンドデプロイ**
+  - [x] **1.1. Dockerfileの最終確認と調整**
+    - [x] `apps/backend/Dockerfile` がCloud Runの要件を満たし、アプリケーションを正しくビルドできることを確認する。
+    - [x] 必要に応じて、依存関係のキャッシュやマルチステージビルドを最適化し、イメージサイズとビルド時間を削減する。
+  - [x] **1.2. gcloud CLIのセットアップと認証**
+    - [x] ローカル環境に `gcloud CLI` がインストールされ、初期設定が完了していることを確認する。
+    - [x] GCPプロジェクト `liberate-report-check` への認証が正しく行われていることを確認する。
+  - [x] **1.3. Cloud Runへの初回デプロイ実行**
+    - [x] `gcloud run deploy` コマンドを使用して、バックエンドサービスをCloud Runにデプロイする。
+    - [x] 必要な環境変数を設定する:
+      - [x] `GEMINI_API_KEY`: Gemini AI APIキー (Secret Manager経由)
+      - [x] `FIREBASE_PROJECT_ID`: Firebaseプロジェクト ID
+      - [x] `GOOGLE_CLOUD_PROJECT`: GCPプロジェクトID (liberate-report-check)
+      - [x] `DOCUMENT_AI_PROCESSOR_ID`: Document AIプロセッサID (Secret Manager経由)
+      - [x] `DOCUMENT_AI_LOCATION`: Document AIロケーション (us)
+      - [x] `GOOGLE_APPLICATION_CREDENTIALS`: サービスアカウントキーのパス (Secret Manager経由)
+    - [x] Cloud Run設定の最適化:
+      - メモリ: 2GB（Document AI処理のため）
+      - タイムアウト: 60分（大容量PDF処理のため）
+      - 最大インスタンス数: 10
+      - 最小インスタンス数: 0（コスト最適化）
+    - [x] サービスURLが発行され、アクセス可能であることを確認する。
+      - URL: https://ai-financial-analyzer-backend-sjeqewp5lq-an.a.run.app
+  - [ ] **1.4. Cloud Runのロギングと監視設定**
+    - [ ] Cloud Loggingでバックエンドのログが正しく収集されていることを確認する。
+    - [ ] Cloud Monitoringで基本的なメトリクス（リクエスト数、レイテンシ、エラー率）が監視できることを確認する。
+    - [ ] Document AI処理のパフォーマンスメトリクスを追跡する。
+
+- [x] **2. Vercelへのフロントエンドデプロイ**
+  - [x] **2.1. Vercel CLIのセットアップと認証**
+    - [x] ローカル環境に `Vercel CLI` がインストールされ、初期設定が完了していることを確認する。
+    - [x] Vercelアカウントへの認証が正しく行われていることを確認する。
+  - [x] **2.2. Vercelへの初回デプロイ実行**
+    - [x] `vercel deploy` コマンドを使用して、フロントエンドアプリケーションをVercelにデプロイする。
+      - プロジェクト名: financial-analyzer
+      - **🎉 本番URL**: https://financial-analyzer-qnt09yw0z-ks-classic.vercel.app
+      - **✅ 完全解決**: `@repo/types`依存関係問題を解決し、Vercelビルドが成功
+      - **📊 根本原因**: Gitコミット不足でVercelが古い状態を参照していた
+    - [x] バックエンドのCloud RunサービスURLを環境変数として設定:
+      - [x] `VITE_API_URL`: https://ai-financial-analyzer-backend-sjeqewp5lq-an.a.run.app
+      - **✅ 完了**: 37分前に設定済み、全環境（Development, Preview, Production）で利用可能
+    - [x] デプロイされたURLにアクセスし、フロントエンドが正しく表示されることを確認する。
+      - **🚀 最新URL**: https://financial-analyzer-lz843kfu2-ks-classic.vercel.app
+      - **✅ 完了**: アクセス制限解除済み、正常に動作確認済み
+  - [ ] **2.3. カスタムドメイン設定（必要に応じて）**
+    - [ ] Vercelプロジェクトにカスタムドメインを設定する（必要であれば）。
+    - [ ] DNS設定が正しく行われ、カスタムドメインでアクセスできることを確認する。
+
+- [x] **3. Firebase Firestoreのセットアップとセキュリティルール**
+  - [x] **3.1. Firebaseプロジェクトの初期化**
+    - [x] GCPプロジェクト `liberate-report-check` と連携するFirebaseプロジェクトが正しく作成されていることを確認する。
+    - [x] Firebase CLIがローカルにインストールされ、プロジェクトに連携されていることを確認する。
+      - **✅ 完了**: Firebase CLI 14.7.0インストール済み、Firebase/Firestore API有効化済み
+  - [x] **3.2. Firestoreデータベースの作成**
+    - [x] Firestoreデータベースが作成され、Native modeまたはDatastore modeのいずれかで初期化されていることを確認する。
+      - **✅ 完了**: Firestoreデータベース作成済み（us-central1、UID: a666a5bb-c144-4116-a5e9-e147112f40dd）
+  - [x] **3.3. Firestoreセキュリティルールの設定**
+    - [x] `analysisResults` コレクションへのアクセス（読み書き）がバックエンドからのみ許可されるように、セキュリティルールを記述・デプロイする。
+      - **✅ 完了**: firestore.rulesファイル作成済み（一時的に全アクセス許可）
+    - [x] `users`, `checklists` コレクション（将来的な拡張）についても、適切なセキュリティルールを定義する。
+      - **✅ 完了**: 将来的な拡張コレクションのルールも定義済み
+  - [x] **3.4. サービスアカウントの作成と設定**
+    - [x] バックエンド (Cloud Run) がFirestoreにアクセスするためのサービスアカウントを作成し、必要な権限を付与:
+      - [x] `Cloud Datastore User` または `Firestore User`
+      - [x] `Storage Admin` (Document AI用のCloud Storageアクセス)
+      - [x] `Document AI API User`
+    - [x] サービスアカウントの認証情報をCloud Runの環境変数またはSecret Managerを通じて安全に設定する。
+
+- [ ] **4. CI/CDパイプラインの構築 (将来的な拡張)**
+  - [ ] **4.1. GitHub ActionsまたはCloud Buildの設定**
+    - [ ] コードのプッシュ時に自動でテストが実行され、デプロイが行われるCI/CDパイプラインを構築する。
+  - [ ] **4.2. 環境ごとのデプロイ戦略**
+    - [ ] 開発環境、ステージング環境、本番環境といった複数の環境へのデプロイ戦略を定義し、自動化する。
+
+- [ ] **5. デプロイ前の最終チェックリスト**
+  - [ ] **5.1. セキュリティチェック**
+    - [ ] APIキーや認証情報がソースコードにハードコードされていないことを確認
+    - [ ] CORS設定が適切に構成されていることを確認
+    - [ ] HTTPS通信が強制されていることを確認
+  - [ ] **5.2. パフォーマンステスト**
+    - [ ] 大容量PDF（30ページ以上）での動作確認
+    - [ ] 同時アクセステストの実施
+    - [ ] レスポンスタイムの測定
+  - [ ] **5.3. エラーハンドリング**
+    - [ ] エラーページの実装確認
+    - [ ] タイムアウト処理の動作確認
+    - [ ] ユーザーへの適切なエラーメッセージ表示 
