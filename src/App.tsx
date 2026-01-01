@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import ResultsDisplay from './components/ResultsDisplay';
 import MonthlyComparisonTab from './components/MonthlyComparisonTab';
+import CommentGeneratorTab from './components/comment-generator/CommentGeneratorTabV3';
 import { AnalysisResult } from './types';
 import { getCurrentEnvironment } from './utils/environment';
 
 // 🎨 サンプルデータ（UI確認用）
-  const SAMPLE_RESULTS: AnalysisResult[] = [
+const SAMPLE_RESULTS: AnalysisResult[] = [
   {
     page: 1,
     pageTitle: '連結損益計算書',
@@ -89,13 +90,13 @@ const App: React.FC = () => {
   }>({});
   const [processingMode] = useState<'pdf-parse' | 'document-ai'>('pdf-parse');
   const [isUploadSectionCollapsed, setIsUploadSectionCollapsed] = useState(false);
-  
+
   // 🎨 サンプルデータ表示状態
   const [showSampleData, setShowSampleData] = useState(false);
   const isDevelopment = getCurrentEnvironment().name === 'development';
 
   // タブ管理
-  const [activeTab, setActiveTab] = useState<'analysis' | 'comparison'>('analysis');
+  const [activeTab, setActiveTab] = useState<'analysis' | 'comparison' | 'comment-generator'>('analysis');
 
   // 環境に応じたデフォルト処理モード設定（通常モード固定）
   // useEffect(() => {
@@ -163,12 +164,12 @@ const App: React.FC = () => {
 
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const requestUrl = `${apiUrl}/api/analysis/analyze-async`;
-      
+
       console.log('=== 非同期分析開始 ===');
       console.log('リクエストURL:', requestUrl);
       console.log('ファイル名:', file.name);
       console.log('ファイルサイズ:', file.size);
-      
+
       const response = await fetch(requestUrl, {
         method: 'POST',
         body: formData,
@@ -185,14 +186,14 @@ const App: React.FC = () => {
 
       const data = await response.json();
       console.log('非同期処理開始レスポンス:', data);
-      
+
       if (data.success && data.operationId) {
         setAsyncStatus({
           operationId: data.operationId,
           status: 'RUNNING',
           progress: 0
         });
-        
+
         // ポーリング開始
         pollAsyncStatus(data.operationId);
       } else {
@@ -210,23 +211,23 @@ const App: React.FC = () => {
   const pollAsyncStatus = useCallback(async (operationId: string) => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
     const statusUrl = `${apiUrl}/api/analysis/analyze-status/${operationId}`;
-    
+
     const poll = async (isFirstCheck = false) => {
       try {
         const response = await fetch(statusUrl);
         if (!response.ok) {
           throw new Error(`Status check failed: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log('ステータス確認:', data);
-        
+
         setAsyncStatus({
           operationId,
           status: data.status,
           progress: data.progress
         });
-        
+
         if (data.status === 'SUCCEEDED') {
           // デバッグ: 受信した分析結果のtype一覧を確認
           console.log('=== フロントエンド: 受信した分析結果 ===');
@@ -236,7 +237,7 @@ const App: React.FC = () => {
             data.results.forEach((result: AnalysisResult, index: number) => {
               console.log(`結果${index + 1}: type="${result.type}", summary="${result.summary?.substring(0, 50)}..."`);
             });
-            
+
             // typeの重複を確認
             const typeCount = data.results.reduce((acc: Record<string, number>, result: AnalysisResult) => {
               acc[result.type] = (acc[result.type] || 0) + 1;
@@ -244,7 +245,7 @@ const App: React.FC = () => {
             }, {});
             console.log('フロントエンド type別件数:', typeCount);
           }
-          
+
           setResults(data.results || []);
           setAnalysisInfo({
             engineUsed: data.engineUsed,
@@ -254,7 +255,7 @@ const App: React.FC = () => {
           setIsAnalyzing(false);
           // 分析結果が出た時に自動で折りたたむ
           setIsUploadSectionCollapsed(true);
-          
+
           // 🚀 pdf-parseの場合は即座完了をログ出力
           if (data.engineUsed === 'pdf-parse') {
             console.log('✅ pdf-parse 高速処理完了 - ポーリング不要でした');
@@ -268,11 +269,11 @@ const App: React.FC = () => {
         } else if (data.status === 'RUNNING') {
           // 🔄 実際の非同期処理（主にDocument AI）の場合のみ継続ポーリング
           const pollingInterval = data.engineUsed === 'pdf-parse' ? 500 : 2000; // pdf-parseは短い間隔
-          
+
           if (isFirstCheck && data.engineUsed === 'pdf-parse') {
             console.log('🚀 pdf-parse 高速処理中 - すぐに完了予定');
           }
-          
+
           setTimeout(() => poll(false), pollingInterval);
         }
       } catch (error) {
@@ -281,7 +282,7 @@ const App: React.FC = () => {
         setIsAnalyzing(false);
       }
     };
-    
+
     // 最初の状態確認を即座に実行
     poll(true);
   }, []);
@@ -299,7 +300,7 @@ const App: React.FC = () => {
                 <p className="text-xs text-gray-600">財務レポートの分析と検証</p>
               </div>
             </div>
-            
+
             {/* 🎨 サンプルデータボタン (本番でも表示) */}
             <div className="flex items-center gap-2">
               {/* <div className="text-xs text-gray-500 mr-2">🛠️ 開発モード</div> */}
@@ -331,23 +332,30 @@ const App: React.FC = () => {
           <nav className="flex space-x-8">
             <button
               onClick={() => setActiveTab('analysis')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'analysis'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'analysis'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
             >
               🔍 レポート分析
             </button>
             <button
               onClick={() => setActiveTab('comparison')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'comparison'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'comparison'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
             >
               📈 前月比較
+            </button>
+            <button
+              onClick={() => setActiveTab('comment-generator')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'comment-generator'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+            >
+              ✨ コメント生成
             </button>
           </nav>
         </div>
@@ -356,7 +364,7 @@ const App: React.FC = () => {
       <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
         {activeTab === 'analysis' ? (
           <div className="h-full flex flex-col px-4 py-4 gap-4">
-            
+
             {/* コンパクトなファイルアップロードセクション */}
             {!isUploadSectionCollapsed && (
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex-shrink-0">
@@ -376,10 +384,10 @@ const App: React.FC = () => {
                         onClick={() => setIsUploadSectionCollapsed(!isUploadSectionCollapsed)}
                         className="text-gray-500 hover:text-gray-700 transition-colors"
                       >
-                        <svg 
+                        <svg
                           className={`w-5 h-5 transform transition-transform ${isUploadSectionCollapsed ? 'rotate-180' : ''}`}
-                          fill="none" 
-                          stroke="currentColor" 
+                          fill="none"
+                          stroke="currentColor"
                           viewBox="0 0 24 24"
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -387,7 +395,7 @@ const App: React.FC = () => {
                       </button>
                     )}
                   </div>
-                  
+
                   {/* ファイル選択 */}
                   <div className="mt-4">
                     <input
@@ -445,7 +453,7 @@ const App: React.FC = () => {
             {/* メインコンテンツエリア - 分析結果中心 */}
             <div className="flex-1 min-h-0 max-h-full">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
-                
+
                 {/* 分析結果のヘッダー */}
                 <div className="px-6 py-4 flex-shrink-0 border-b border-gray-100">
                   <div className="flex items-center justify-between">
@@ -481,7 +489,7 @@ const App: React.FC = () => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* スクロール可能な分析結果エリア */}
                 <div className="flex-1 min-h-0 px-6 py-4 overflow-y-auto">
                   {isAnalyzing && (
@@ -520,7 +528,7 @@ const App: React.FC = () => {
                       <div className="text-center">
                         <div className="text-5xl mb-4">🏦</div>
                         <h3 className="text-xl font-medium text-gray-900 mb-3">AI財務レポートアナライザー</h3>
-                        <p className="text-gray-600 mb-4">AIによる高精度な分析で、<br/>財務レポートの問題点を自動検出します。</p>
+                        <p className="text-gray-600 mb-4">AIによる高精度な分析で、<br />財務レポートの問題点を自動検出します。</p>
                         <div className="text-sm text-gray-500 space-y-1">
                           <p>✓ 数値計算の正確性検証</p>
                           <p>✓ 表示・記載の整合性確認</p>
@@ -534,8 +542,10 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        ) : (
+        ) : activeTab === 'comparison' ? (
           <MonthlyComparisonTab />
+        ) : (
+          <CommentGeneratorTab />
         )}
       </div>
     </div>
