@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  
+
   return {
     plugins: [react()],
     build: {
@@ -25,6 +25,13 @@ export default defineConfig(({ mode }) => {
           '.',
           './node_modules'
         ]
+      },
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3001',
+          changeOrigin: true,
+          secure: false,
+        }
       }
     },
     // resolve: {

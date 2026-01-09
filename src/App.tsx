@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import ResultsDisplay from './components/ResultsDisplay';
-import MonthlyComparisonTab from './components/MonthlyComparisonTab';
-import CommentGeneratorTab from './components/comment-generator/CommentGeneratorTabV3';
+import CommentGeneratorTab from './components/comment-generator/CommentGeneratorTabV4';
 import { AnalysisResult } from './types';
-import { getCurrentEnvironment } from './utils/environment';
+// import { getCurrentEnvironment } from './utils/environment'; // 将来使用予定
 
 // 🎨 サンプルデータ（UI確認用）
 const SAMPLE_RESULTS: AnalysisResult[] = [
@@ -93,10 +92,11 @@ const App: React.FC = () => {
 
   // 🎨 サンプルデータ表示状態
   const [showSampleData, setShowSampleData] = useState(false);
-  const isDevelopment = getCurrentEnvironment().name === 'development';
+  // isDevelopment は開発モード表示のために保持（将来使用予定）
+  // const isDevelopment = getCurrentEnvironment().name === 'development';
 
   // タブ管理
-  const [activeTab, setActiveTab] = useState<'analysis' | 'comparison' | 'comment-generator'>('analysis');
+  const [activeTab, setActiveTab] = useState<'analysis' | 'comment-generator'>('analysis');
 
   // 環境に応じたデフォルト処理モード設定（通常モード固定）
   // useEffect(() => {
@@ -340,15 +340,6 @@ const App: React.FC = () => {
               🔍 レポート分析
             </button>
             <button
-              onClick={() => setActiveTab('comparison')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'comparison'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-            >
-              📈 前月比較
-            </button>
-            <button
               onClick={() => setActiveTab('comment-generator')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${activeTab === 'comment-generator'
                 ? 'border-indigo-500 text-indigo-600'
@@ -542,8 +533,6 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
-        ) : activeTab === 'comparison' ? (
-          <MonthlyComparisonTab />
         ) : (
           <CommentGeneratorTab />
         )}
