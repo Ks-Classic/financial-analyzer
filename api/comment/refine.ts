@@ -110,7 +110,7 @@ export default async function handler(
             previousComment,
             currentImage,
             imageCacheId,
-            modelName = 'gemini-3-flash-preview'
+            modelName = 'gemini-3.1-pro-preview'
         } = req.body as RefineRequest;
 
         if (!originalComment) {

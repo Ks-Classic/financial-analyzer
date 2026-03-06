@@ -145,7 +145,7 @@ export function extractBase64FromDataUrl(dataUrl: string): string {
  */
 export async function extractComment(
     imageBase64: string,
-    modelName: string = 'gemini-3-flash-preview'
+    modelName: string = 'gemini-3.1-flash-lite-preview'
 ): Promise<ExtractCommentResponse> {
     try {
         console.log(`[DEBUG] extractComment: Calling ${API_BASE}/api/comment/extract`);

@@ -67,7 +67,7 @@ export default async function handler(
             cacheId,
             targetPage,
             pagePrompt,
-            modelName = 'gemini-3-flash-preview'
+            modelName = 'gemini-3.1-pro-preview'
         } = req.body as GenerateWithCacheRequest;
 
         if (!targetPage || !targetPage.currentImage) {

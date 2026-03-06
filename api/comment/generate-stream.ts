@@ -68,7 +68,7 @@ async function createImageCache(
         if (!parsed) return null;
 
         const cache = await cacheManager.create({
-            model: 'models/gemini-3-flash-preview',
+            model: 'models/gemini-3.1-pro-preview',
             displayName: `page_${pageNumber}_${Date.now()}`,
             contents: [
                 {
@@ -118,7 +118,7 @@ export default async function handler(
             contextPages,
             systemPrompt,
             pagePrompt,
-            modelName = 'gemini-3-flash-preview'
+            modelName = 'gemini-3.1-pro-preview'
         } = req.body as GenerateRequest;
 
         if (!targetPage || !targetPage.currentImage) {

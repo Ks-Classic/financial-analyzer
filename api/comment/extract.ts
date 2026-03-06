@@ -43,7 +43,7 @@ export default async function handler(
     }
 
     try {
-        const { imageBase64, modelName = 'gemini-3-flash-preview' } = req.body;
+        const { imageBase64, modelName = 'gemini-3.1-flash-lite-preview' } = req.body;
 
         // 画像データの詳細をログ出力
         const base64Preview = imageBase64?.substring(0, 50) || 'N/A';

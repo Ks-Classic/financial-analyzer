@@ -60,7 +60,7 @@ export async function cropImageRegion(
  */
 export async function extractCommentWithGemini(
     imageBase64: string,
-    modelName: string = 'gemini-3-flash-preview'
+    modelName: string = 'gemini-3.1-flash-lite-preview'
 ): Promise<string> {
     if (!API_KEY) {
         console.warn('GEMINI_API_KEY is not set, returning demo comment');
@@ -109,7 +109,7 @@ export async function extractCommentWithGemini(
 export async function extractCommentFromPageRegion(
     pageImageDataUrl: string,
     region: Region,
-    modelName: string = 'gemini-3-flash-preview'
+    modelName: string = 'gemini-3.1-flash-lite-preview'
 ): Promise<string> {
     // 1. 範囲を切り出し
     const croppedBase64 = await cropImageRegion(pageImageDataUrl, region);

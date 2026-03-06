@@ -60,7 +60,7 @@
 |---------|------|
 | フロントエンド | React + TypeScript + Vite |
 | スタイリング | Tailwind CSS |
-| AI | Google Gemini 3 (gemini-3-flash-preview) |
+| AI | Google Gemini 3.1 (gemini-3.1-pro-preview / gemini-3.1-flash-lite-preview) |
 | PDF処理 | pdf.js |
 | API | Vercel Serverless Functions |
 | 状態管理 | React Hooks (useState, useCallback) |

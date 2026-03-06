@@ -124,7 +124,7 @@ export default async function handler(
 
         // キャッシュ作成
         const cache = await cacheManager.create({
-            model: 'models/gemini-3-flash-preview',
+            model: 'models/gemini-3.1-pro-preview',
             displayName: `bulk_report_${pages.length}pages_${Date.now()}`,
             contents: [
                 {
