@@ -109,7 +109,7 @@ export function useCommentGeneration(): UseCommentGenerationResult {
     /**
      * 全ページのコメントを一括生成（高速版）
      * 1. 全ページを一括キャッシュ
-     * 2. 並列で生成（3-4同時）
+     * 2. 順次生成（レート制限回避のため直列処理 + リトライ）
      */
     const generateAll = useCallback(async (
         pages: PageData[],
@@ -160,25 +160,33 @@ export function useCommentGeneration(): UseCommentGenerationResult {
             console.log('Bulk cache created:', cacheId);
 
             // ==============================
-            // Phase 2: 並列生成（3ページ同時）
+            // Phase 2: 順次生成（レート制限回避のため直列処理）
             // ==============================
-            console.log('Phase 2: Generating comments in parallel...');
-            const PARALLEL_COUNT = 3;
+            console.log('Phase 2: Generating comments sequentially...');
+            const MAX_RETRIES = 2;
+            const REQUEST_TIMEOUT_MS = 55000; // Vercel 60s制限の手前
 
-            for (let i = 0; i < pages.length; i += PARALLEL_COUNT) {
+            for (let i = 0; i < pages.length; i++) {
                 // キャンセルチェック
                 if (abortControllerRef.current?.signal.aborted) {
                     setProgress(prev => ({ ...prev, status: 'paused' }));
                     break;
                 }
 
-                const batch = pages.slice(i, i + PARALLEL_COUNT);
+                const page = pages[i];
+                const pagePrompt = prompts.pagePrompts.get(page.pageNumber) || '';
+                let lastError: Error | null = null;
 
-                // 並列で生成
-                const promises = batch.map(async (page) => {
-                    const pagePrompt = prompts.pagePrompts.get(page.pageNumber) || '';
-
+                for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
                     try {
+                        if (attempt > 0) {
+                            console.log(`Retrying P${page.pageNumber} (attempt ${attempt + 1})...`);
+                            await delay(2000 * attempt); // リトライ間隔を徐々に増やす
+                        }
+
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
                         const response = await fetch('/api/comment/generate-fast', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
@@ -188,52 +196,58 @@ export function useCommentGeneration(): UseCommentGenerationResult {
                                 pageTitle: page.pageTitle,
                                 pagePrompt,
                             }),
+                            signal: controller.signal,
                         });
+
+                        clearTimeout(timeoutId);
 
                         if (!response.ok) {
                             const errorData = await response.json().catch(() => ({}));
-                            throw new Error(errorData.error || `P${page.pageNumber}の生成に失敗`);
+                            throw new Error(errorData.error || `P${page.pageNumber}: HTTP ${response.status}`);
                         }
 
                         const result = await response.json();
-                        return {
+                        newResults.set(page.pageNumber, {
                             pageNumber: page.pageNumber,
                             comment: result.generatedComment,
                             processingTime: result.processingTime,
                             status: 'completed' as const,
                             timestamp: new Date().toISOString(),
-                        };
+                        });
+                        lastError = null;
+                        break; // 成功したらリトライループ脱出
                     } catch (err) {
-                        console.error(`Error generating P${page.pageNumber}:`, err);
-                        return {
-                            pageNumber: page.pageNumber,
-                            comment: '',
-                            processingTime: 0,
-                            status: 'error' as const,
-                            error: err instanceof Error ? err.message : '生成に失敗しました',
-                        };
+                        lastError = err instanceof Error ? err : new Error('生成に失敗しました');
+                        if (lastError.name === 'AbortError') {
+                            lastError = new Error(`P${page.pageNumber}: タイムアウト（55秒）`);
+                        }
+                        console.error(`Error generating P${page.pageNumber} (attempt ${attempt + 1}):`, lastError.message);
                     }
-                });
-
-                const batchResults = await Promise.all(promises);
-
-                // 結果を更新
-                for (const result of batchResults) {
-                    newResults.set(result.pageNumber, result);
                 }
+
+                // リトライ全て失敗した場合
+                if (lastError) {
+                    newResults.set(page.pageNumber, {
+                        pageNumber: page.pageNumber,
+                        comment: '',
+                        processingTime: 0,
+                        status: 'error' as const,
+                        error: lastError.message,
+                    });
+                }
+
                 setResults(new Map(newResults));
 
                 // 進捗更新
-                const completedSoFar = Math.min(i + PARALLEL_COUNT, pages.length);
                 setProgress(prev => ({
                     ...prev,
-                    completed: completedSoFar,
-                    currentPage: batch[batch.length - 1]?.pageNumber || 0,
+                    completed: i + 1,
+                    currentPage: page.pageNumber,
                 }));
 
-                // レート制限対策（バッチ間のみ）
-                if (i + PARALLEL_COUNT < pages.length) {
-                    await delay(500);
+                // レート制限対策（ページ間の間隔）
+                if (i < pages.length - 1) {
+                    await delay(1000);
                 }
             }
 

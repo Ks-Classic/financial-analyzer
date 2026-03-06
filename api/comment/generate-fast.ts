@@ -103,7 +103,13 @@ ${pagePrompt ? `【追加指示】\n${pagePrompt}\n` : ''}
 ・コメントのみを出力してください（説明不要）
 `;
 
-        const result = await model.generateContent(prompt);
+        // 50秒タイムアウト（Vercel 60s制限の手前）
+        const generatePromise = model.generateContent(prompt);
+        const timeoutPromise = new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`P${pageNumber}: AI生成タイムアウト（50秒）`)), 50000)
+        );
+
+        const result = await Promise.race([generatePromise, timeoutPromise]);
         const response = await result.response;
         const generatedComment = response.text().trim();
 
@@ -119,12 +125,13 @@ ${pagePrompt ? `【追加指示】\n${pagePrompt}\n` : ''}
         });
 
     } catch (error) {
-        console.error('Fast generation error:', error);
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`Fast generation error (P${req.body?.pageNumber}):`, errorMessage);
 
         return res.status(500).json({
             success: false,
-            error: `Failed to generate comment: ${errorMessage}`,
+            error: errorMessage,
+            pageNumber: req.body?.pageNumber,
         });
     }
 }
