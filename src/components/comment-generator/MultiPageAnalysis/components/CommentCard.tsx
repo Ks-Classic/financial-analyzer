@@ -3,6 +3,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { GeneratedCommentResult } from '../../../../types/multi-page-analysis';
+import { DiffViewer, DiffStatsBadge } from './DiffViewer';
+import { computeTextDiff, DiffFragment } from '../../../../lib/diff-utils';
 
 interface CommentCardProps {
     pageNumber: number;
@@ -45,6 +47,15 @@ export const CommentCard: React.FC<CommentCardProps> = ({
     const [chatInput, setChatInput] = useState('');
     const [isRefining, setIsRefining] = useState(false);
 
+    // 🆕 差分表示関連の状態
+    const [editHistory, setEditHistory] = useState<Array<{
+        text: string;
+        timestamp: Date;
+        instruction?: string;
+    }>>([{ text: generatedComment.comment, timestamp: new Date() }]);
+    const [currentDiff, setCurrentDiff] = useState<DiffFragment[] | null>(null);
+    const [showDiffMode, setShowDiffMode] = useState(false);
+
     // 外部からのshowPreviousComment変更に追従
     useEffect(() => {
         setShowPrev(showPreviousComment);
@@ -67,11 +78,30 @@ export const CommentCard: React.FC<CommentCardProps> = ({
     const handleChatRefine = async () => {
         if (!chatInput.trim() || !onChatRefine) return;
 
+        const beforeText = displayComment; // 🆕 修正前のテキストを保存
         setIsRefining(true);
+
         try {
             const refined = await onChatRefine(pageNumber, chatInput.trim());
+
+            // 🆕 差分を計算
+            const diff = computeTextDiff(beforeText, refined);
+            setCurrentDiff(diff);
+
+            // 🆕 履歴に追加
+            setEditHistory(prev => [
+                ...prev,
+                {
+                    text: refined,
+                    timestamp: new Date(),
+                    instruction: chatInput.trim()
+                }
+            ]);
+
             onEdit(pageNumber, refined);
             setChatInput('');
+
+            // 🆕 3秒後に差分を自動非表示（autoHideがDiffViewerで処理）
         } catch (e) {
             console.error('Chat refine error:', e);
         } finally {
@@ -118,7 +148,26 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                     </div>
                     <span className="font-semibold text-gray-800">{pageTitle}</span>
                     {editedComment && (
-                        <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">編集済</span>
+                        <>
+                            <span className="text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded">
+                                編集済 {editHistory.length > 1 && `(${editHistory.length - 1}回)`}
+                            </span>
+                            {editHistory.length > 2 && (
+                                <button
+                                    onClick={() => setShowDiffMode(!showDiffMode)}
+                                    className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded hover:bg-indigo-100 transition-colors"
+                                >
+                                    {showDiffMode ? '📝 通常表示' : '📊 差分表示'}
+                                </button>
+                            )}
+                            {/* 🆕 差分統計バッジ */}
+                            {editHistory.length > 1 && (
+                                <DiffStatsBadge
+                                    oldLength={editHistory[editHistory.length - 2].text.length}
+                                    newLength={displayComment.length}
+                                />
+                            )}
+                        </>
                     )}
                     {cacheId && (
                         <span className="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">⚡高速</span>
@@ -129,8 +178,8 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                         <button
                             onClick={() => setShowPrev(!showPrev)}
                             className={`px-2 py-1 text-xs rounded-lg transition-colors ${showPrev
-                                    ? 'bg-amber-100 text-amber-700'
-                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                ? 'bg-amber-100 text-amber-700'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                 }`}
                         >
                             {showPrev ? '前月 ▼' : '前月 ▶'}
@@ -139,8 +188,8 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                     <button
                         onClick={handleCopy}
                         className={`px-3 py-1 text-xs rounded-lg transition-all ${copied
-                                ? 'bg-emerald-100 text-emerald-700'
-                                : 'bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-700'
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : 'bg-gray-100 text-gray-600 hover:bg-indigo-100 hover:text-indigo-700'
                             }`}
                     >
                         {copied ? '✓ コピー済' : '📋 コピー'}
@@ -205,13 +254,45 @@ export const CommentCard: React.FC<CommentCardProps> = ({
                         </div>
                     ) : (
                         <>
-                            <div
-                                className="flex-1 text-sm text-gray-800 whitespace-pre-wrap cursor-text hover:bg-indigo-50/50 rounded-lg p-2 transition-colors overflow-y-auto max-h-[200px]"
-                                onClick={() => setIsEditing(true)}
-                                title="クリックで編集"
-                            >
-                                {displayComment || '（コメントなし）'}
-                            </div>
+                            {/* 🆕 差分表示モード分岐 */}
+                            {currentDiff ? (
+                                // 3秒間の自動ハイライト表示
+                                <div
+                                    className="flex-1 cursor-text hover:bg-indigo-50/50 rounded-lg p-2 transition-colors overflow-y-auto max-h-[200px]"
+                                    onClick={() => setIsEditing(true)}
+                                    title="クリックで編集"
+                                >
+                                    <DiffViewer
+                                        fragments={currentDiff}
+                                        autoHide={true}
+                                        autoHideDuration={3}
+                                    />
+                                </div>
+                            ) : showDiffMode && editHistory.length > 1 ? (
+                                // 手動差分表示モード
+                                <div
+                                    className="flex-1 cursor-text hover:bg-indigo-50/50 rounded-lg p-2 transition-colors overflow-y-auto max-h-[200px]"
+                                    onClick={() => setIsEditing(true)}
+                                    title="クリックで編集"
+                                >
+                                    <DiffViewer
+                                        fragments={computeTextDiff(
+                                            editHistory[editHistory.length - 2].text,
+                                            displayComment
+                                        )}
+                                        autoHide={false}
+                                    />
+                                </div>
+                            ) : (
+                                // 通常表示
+                                <div
+                                    className="flex-1 text-sm text-gray-800 whitespace-pre-wrap cursor-text hover:bg-indigo-50/50 rounded-lg p-2 transition-colors overflow-y-auto max-h-[200px]"
+                                    onClick={() => setIsEditing(true)}
+                                    title="クリックで編集"
+                                >
+                                    {displayComment || '（コメントなし）'}
+                                </div>
+                            )}
 
                             {/* チャット修正エリア */}
                             <div className="mt-2 pt-2 border-t border-gray-100">
