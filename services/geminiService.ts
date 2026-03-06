@@ -9,8 +9,8 @@ function getApiKeyFromEnvironment(): string | undefined {
     // Check if 'process' and 'process.env' are available, typical for Node.js environments
     // or environments where they are polyfilled/defined by a build tool.
     if (typeof process === 'object' && process !== null &&
-        typeof process.env === 'object' && process.env !== null) {
-      
+      typeof process.env === 'object' && process.env !== null) {
+
       const apiKeyVal = process.env.API_KEY;
 
       if (typeof apiKeyVal === 'string' && apiKeyVal.length > 0) {
@@ -113,8 +113,8 @@ export function parseFinancialNumber(input: string | number | undefined | null):
 
   try {
     if (s === "") {
-        console.warn(`parseFinancialNumber: String became empty after cleaning. Original input: "${input}"`);
-        return null;
+      console.warn(`parseFinancialNumber: String became empty after cleaning. Original input: "${input}"`);
+      return null;
     }
     let num = new Decimal(s);
     if (isNegativeBySymbol && num.isPositive()) {
@@ -135,7 +135,7 @@ export function parseFinancialNumber(input: string | number | undefined | null):
         console.warn(`parseFinancialNumber: Attempting fallback parsing of "${fallbackMatch[0]}" from processed string "${s}".`);
         let num = new Decimal(fallbackMatch[0]);
         if (isNegativeBySymbol && num.isPositive() && !fallbackMatch[0].startsWith('-')) {
-            num = num.negated();
+          num = num.negated();
         }
         if (isPercentage) {
           num = num.div(100);
@@ -161,38 +161,38 @@ export async function* analyzeFinancialData(
   pages: PdfPageContent[]
 ): AsyncGenerator<GeminiServiceStream, void, unknown> {
   if (!ai) {
-     console.error("Gemini APIクライアントが初期化されていません (APIキーの問題の可能性があります)。モックエラーを返します。");
-     yield {
-        type: 'data',
-        results: [{
-            id: 'no-api-key-error',
-            status: AnalysisStatus.Error,
-            message: "Gemini APIクライアントが初期化されていません。APIキーが正しく設定されているか、上記の警告メッセージを確認してください。",
-            page: 0,
-            displayPageNumber: 1,
-            pdfPhysicalPageNumber: 2,
-            pageTitle: "システムエラー",
-            itemPath: "システム全体",
-            aiComment: "APIキーの設定を確認し、アプリケーションをリロードしてください。"
-        }]
-     };
-     return;
+    console.error("Gemini APIクライアントが初期化されていません (APIキーの問題の可能性があります)。モックエラーを返します。");
+    yield {
+      type: 'data',
+      results: [{
+        id: 'no-api-key-error',
+        status: AnalysisStatus.Error,
+        message: "Gemini APIクライアントが初期化されていません。APIキーが正しく設定されているか、上記の警告メッセージを確認してください。",
+        page: 0,
+        displayPageNumber: 1,
+        pdfPhysicalPageNumber: 2,
+        pageTitle: "システムエラー",
+        itemPath: "システム全体",
+        aiComment: "APIキーの設定を確認し、アプリケーションをリロードしてください。"
+      }]
+    };
+    return;
   }
 
   if (pages.length === 0) {
     yield {
-        type: 'data',
-        results: [{
-            id: 'no-pages-to-analyze',
-            status: AnalysisStatus.Attention,
-            message: "分析対象のページコンテンツがありません。PDFが2ページ以上あることを確認してください。",
-            page: 0,
-            displayPageNumber: 1,
-            pdfPhysicalPageNumber: 2,
-            pageTitle: "データ不足",
-            itemPath: "入力データ",
-            aiComment: "PDFの2ページ目以降が分析対象となります。"
-        }]
+      type: 'data',
+      results: [{
+        id: 'no-pages-to-analyze',
+        status: AnalysisStatus.Attention,
+        message: "分析対象のページコンテンツがありません。PDFが2ページ以上あることを確認してください。",
+        page: 0,
+        displayPageNumber: 1,
+        pdfPhysicalPageNumber: 2,
+        pageTitle: "データ不足",
+        itemPath: "入力データ",
+        aiComment: "PDFの2ページ目以降が分析対象となります。"
+      }]
     };
     return;
   }
@@ -282,35 +282,35 @@ export async function* analyzeFinancialData(
 
   try {
     yield { type: 'progress', message: 'AIモデルによるレポート全体の分析処理を実行中です。結果生成まで少々お待ちください...' };
-    
+
     const response: GenerateContentResponse = await model.generateContent({
-        model: "gemini-2.5-pro",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            temperature: 0.1,
-            topK: 40,
-            topP: 0.95,
-        },
+      model: "gemini-2.5-pro",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        temperature: 0.1,
+        topK: 40,
+        topP: 0.95,
+      },
     });
 
     if (!response) {
-        console.error("AIから応答がありません (null または undefined)。");
-        throw new Error("AIから有効な応答が返されませんでした。");
+      console.error("AIから応答がありません (null または undefined)。");
+      throw new Error("AIから有効な応答が返されませんでした。");
     }
 
     const responseTextValue = response.text;
 
     if (typeof responseTextValue !== 'string') {
-        console.error(
-            "AI応答の'text'プロパティが文字列ではありませんでした。",
-            "タイプ:", typeof responseTextValue,
-            "値:", responseTextValue,
-            "応答全体:", response
-        );
-        throw new Error(`AI応答のテキスト部分を解析できませんでした (予期しない型: ${typeof responseTextValue})。SDKのバージョンや応答内容を確認してください。`);
+      console.error(
+        "AI応答の'text'プロパティが文字列ではありませんでした。",
+        "タイプ:", typeof responseTextValue,
+        "値:", responseTextValue,
+        "応答全体:", response
+      );
+      throw new Error(`AI応答のテキスト部分を解析できませんでした (予期しない型: ${typeof responseTextValue})。SDKのバージョンや応答内容を確認してください。`);
     }
-    
+
     yield { type: 'progress', message: 'AIからの分析結果(JSON)を受信しました。内容を検証・整形しています...' };
 
     let jsonStrForParsing = responseTextValue.trim();
@@ -322,49 +322,49 @@ export async function* analyzeFinancialData(
 
     let parsedJson: any;
     try {
-        parsedJson = JSON.parse(jsonStrForParsing);
+      parsedJson = JSON.parse(jsonStrForParsing);
 
-        if (typeof parsedJson === 'string') {
-            // This case handles if the AI returned a string that is itself a JSON string.
-            // e.g., "\"[{\\\"key\\\":\\\"value\\\"}]\""
-            // The first parse would yield "[{\\\"key\\\":\\\"value\\\"}]" (a string).
-            // We then try to parse this resulting string.
-            console.warn("AI response was initially parsed into a string. Attempting to parse this string as JSON. String content for second parse attempt:", parsedJson);
-            jsonStrForParsing = parsedJson; // Update the string to be parsed for the next attempt (and for error reporting)
-            parsedJson = JSON.parse(jsonStrForParsing);
-        }
+      if (typeof parsedJson === 'string') {
+        // This case handles if the AI returned a string that is itself a JSON string.
+        // e.g., "\"[{\\\"key\\\":\\\"value\\\"}]\""
+        // The first parse would yield "[{\\\"key\\\":\\\"value\\\"}]" (a string).
+        // We then try to parse this resulting string.
+        console.warn("AI response was initially parsed into a string. Attempting to parse this string as JSON. String content for second parse attempt:", parsedJson);
+        jsonStrForParsing = parsedJson; // Update the string to be parsed for the next attempt (and for error reporting)
+        parsedJson = JSON.parse(jsonStrForParsing);
+      }
     } catch (e) {
-        const error = e as Error; // Type assertion
-        // Log the string that actually caused the error
-        console.error("JSON.parse failed. String content that failed parsing:", `>>>${jsonStrForParsing}<<<`, "Error Name:", error.name, "Error Message:", error.message, "Stack:", error.stack);
-        
-        let errorMessage = "AIでのデータ分析に失敗しました。AIの応答形式が正しくない可能性があります。";
-        errorMessage += ` 詳細: ${error.message}.`;
-        
-        // Check for common JSON error messages to provide a snippet
-        if (error.message.toLowerCase().includes("unexpected token") || 
-            error.message.toLowerCase().includes("unterminated string") || 
-            error.message.toLowerCase().includes("expected") && jsonStrForParsing.length > 0) {
-            
-            const errorPosMatch = error.message.match(/position\s+(\d+)/);
-            let errorSnippet = "";
-            if (errorPosMatch && errorPosMatch[1]) {
-                const pos = parseInt(errorPosMatch[1], 10);
-                const start = Math.max(0, pos - 50);
-                const end = Math.min(jsonStrForParsing.length, pos + 50);
-                errorSnippet = `...${jsonStrForParsing.substring(start, end)}...`;
-            } else {
-                // If no position, show a larger initial chunk for context
-                errorSnippet = jsonStrForParsing.substring(0, Math.min(150, jsonStrForParsing.length));
-            }
-            errorMessage += ` 応答データ(エラー箇所周辺または冒頭): ${errorSnippet}`;
+      const error = e as Error; // Type assertion
+      // Log the string that actually caused the error
+      console.error("JSON.parse failed. String content that failed parsing:", `>>>${jsonStrForParsing}<<<`, "Error Name:", error.name, "Error Message:", error.message, "Stack:", error.stack);
+
+      let errorMessage = "AIでのデータ分析に失敗しました。AIの応答形式が正しくない可能性があります。";
+      errorMessage += ` 詳細: ${error.message}.`;
+
+      // Check for common JSON error messages to provide a snippet
+      if (error.message.toLowerCase().includes("unexpected token") ||
+        error.message.toLowerCase().includes("unterminated string") ||
+        error.message.toLowerCase().includes("expected") && jsonStrForParsing.length > 0) {
+
+        const errorPosMatch = error.message.match(/position\s+(\d+)/);
+        let errorSnippet = "";
+        if (errorPosMatch && errorPosMatch[1]) {
+          const pos = parseInt(errorPosMatch[1], 10);
+          const start = Math.max(0, pos - 50);
+          const end = Math.min(jsonStrForParsing.length, pos + 50);
+          errorSnippet = `...${jsonStrForParsing.substring(start, end)}...`;
+        } else {
+          // If no position, show a larger initial chunk for context
+          errorSnippet = jsonStrForParsing.substring(0, Math.min(150, jsonStrForParsing.length));
         }
-        const finalError = new Error(errorMessage);
-        // Attach original error details for deeper debugging if needed
-        (finalError as any).originalErrorName = error.name;
-        (finalError as any).originalErrorMessage = error.message;
-        (finalError as any).stringAttemptedToParse = jsonStrForParsing; // The actual string that failed
-        throw finalError;
+        errorMessage += ` 応答データ(エラー箇所周辺または冒頭): ${errorSnippet}`;
+      }
+      const finalError = new Error(errorMessage);
+      // Attach original error details for deeper debugging if needed
+      (finalError as any).originalErrorName = error.name;
+      (finalError as any).originalErrorMessage = error.message;
+      (finalError as any).stringAttemptedToParse = jsonStrForParsing; // The actual string that failed
+      throw finalError;
     }
 
 
@@ -372,15 +372,15 @@ export async function* analyzeFinancialData(
 
     // Helper function for safe formatting of Decimals to percentage strings
     const safeFormatToPercentageString = (val: Decimal | null, places: number = 2): string => {
-        if (val === null) return "N/A";
-        if (!val.isFinite()) return val.toString(); // Handles NaN, Infinity
-        return val.mul(100).toDecimalPlaces(places).toString();
+      if (val === null) return "N/A";
+      if (!val.isFinite()) return val.toString(); // Handles NaN, Infinity
+      return val.mul(100).toDecimalPlaces(places).toString();
     };
 
     const processedResults = rawResults.map((rawResult: RawAiOutputItem, index): AnalysisResult => {
       let statusFromAI: AnalysisStatus = (Object.values(AnalysisStatus) as string[]).includes(rawResult.status as string)
-          ? rawResult.status as AnalysisStatus
-          : AnalysisStatus.Attention;
+        ? rawResult.status as AnalysisStatus
+        : AnalysisStatus.Attention;
 
       if ((rawResult.status as string) === '警告') {
         statusFromAI = AnalysisStatus.Attention;
@@ -400,146 +400,146 @@ export async function* analyzeFinancialData(
 
       let systemValidationMessage = "";
       let systemCalculatedValueString: string | undefined = undefined;
-      let operationPerformed = ""; 
+      let operationPerformed = "";
 
       if (rawResult.calculationOperands && rawResult.calculationOperands.length > 0 && rawResult.calculationOperation) {
-          const operandsDecimal = rawResult.calculationOperands.map(opStr => parseFinancialNumber(opStr));
-          
-          if (operandsDecimal.every(op => op !== null)) {
-              const decimalOperands = operandsDecimal as Decimal[];
-              let systemCalculatedDecimal: Decimal | null = null;
-              try {
-                  switch (rawResult.calculationOperation.toLowerCase()) {
-                      case 'sum':
-                      case 'add':
-                          systemCalculatedDecimal = decimalOperands.reduce((acc, val) => acc.plus(val), new Decimal(0));
-                          operationPerformed = `${decimalOperands.map(d => d.toString()).join(' + ')} = ${systemCalculatedDecimal.toString()}`;
-                          break;
-                      case 'subtract':
-                          if (decimalOperands.length >= 2) {
-                            systemCalculatedDecimal = decimalOperands[0].minus(decimalOperands[1]);
-                            operationPerformed = `${decimalOperands[0].toString()} - ${decimalOperands[1].toString()} = ${systemCalculatedDecimal.toString()}`;
-                          }
-                          break;
-                      case 'multiply':
-                          if (decimalOperands.length >= 2) {
-                            systemCalculatedDecimal = decimalOperands[0].times(decimalOperands[1]);
-                            operationPerformed = `${decimalOperands[0].toString()} * ${decimalOperands[1].toString()} = ${systemCalculatedDecimal.toString()}`;
-                          }
-                          break;
-                      case 'divide':
-                      case 'divide_first_by_second_as_percentage':
-                      case 'percentage_of_total': 
-                          if (decimalOperands.length >= 2 && !decimalOperands[1].isZero()) {
-                            systemCalculatedDecimal = decimalOperands[0].div(decimalOperands[1]);
-                            operationPerformed = `${decimalOperands[0].toString()} / ${decimalOperands[1].toString()} = ${systemCalculatedDecimal.toString()}`;
-                            if (rawResult.calculationOperation.toLowerCase().includes('percentage')) {
-                                operationPerformed += ` ( = ${safeFormatToPercentageString(systemCalculatedDecimal)}%)`;
-                            }
-                          } else if (decimalOperands.length >= 2 && decimalOperands[1].isZero()) {
-                             systemValidationMessage += "システムエラー: ゼロによる除算が試みられました。";
-                             result.status = AnalysisStatus.Error;
-                          }
-                          break;
-                      default:
-                          systemValidationMessage += `未対応の計算操作: ${rawResult.calculationOperation}。`;
+        const operandsDecimal = rawResult.calculationOperands.map(opStr => parseFinancialNumber(opStr));
+
+        if (operandsDecimal.every(op => op !== null)) {
+          const decimalOperands = operandsDecimal as Decimal[];
+          let systemCalculatedDecimal: Decimal | null = null;
+          try {
+            switch (rawResult.calculationOperation.toLowerCase()) {
+              case 'sum':
+              case 'add':
+                systemCalculatedDecimal = decimalOperands.reduce((acc, val) => acc.plus(val), new Decimal(0));
+                operationPerformed = `${decimalOperands.map(d => d.toString()).join(' + ')} = ${systemCalculatedDecimal.toString()}`;
+                break;
+              case 'subtract':
+                if (decimalOperands.length >= 2) {
+                  systemCalculatedDecimal = decimalOperands[0].minus(decimalOperands[1]);
+                  operationPerformed = `${decimalOperands[0].toString()} - ${decimalOperands[1].toString()} = ${systemCalculatedDecimal.toString()}`;
+                }
+                break;
+              case 'multiply':
+                if (decimalOperands.length >= 2) {
+                  systemCalculatedDecimal = decimalOperands[0].times(decimalOperands[1]);
+                  operationPerformed = `${decimalOperands[0].toString()} * ${decimalOperands[1].toString()} = ${systemCalculatedDecimal.toString()}`;
+                }
+                break;
+              case 'divide':
+              case 'divide_first_by_second_as_percentage':
+              case 'percentage_of_total':
+                if (decimalOperands.length >= 2 && !decimalOperands[1].isZero()) {
+                  systemCalculatedDecimal = decimalOperands[0].div(decimalOperands[1]);
+                  operationPerformed = `${decimalOperands[0].toString()} / ${decimalOperands[1].toString()} = ${systemCalculatedDecimal.toString()}`;
+                  if (rawResult.calculationOperation.toLowerCase().includes('percentage')) {
+                    operationPerformed += ` ( = ${safeFormatToPercentageString(systemCalculatedDecimal)}%)`;
                   }
-
-                  if (systemCalculatedDecimal !== null) {
-                    systemCalculatedValueString = systemCalculatedDecimal.toString(); 
-                    result.calculatedValue = systemCalculatedValueString; 
-
-                    const originalDecimal = parseFinancialNumber(rawResult.originalValue);
-
-                    if (originalDecimal) {
-                        const diff = originalDecimal.minus(systemCalculatedDecimal); 
-                        const originalValueStr = String(rawResult.originalValue || '');
-                        const originalUnitMultiplier = getUnitMultiplierFromString(originalValueStr);
-
-                        let diffInUnit: Decimal;
-                        if (originalUnitMultiplier.isZero() || !originalUnitMultiplier.isFinite()) {
-                            console.warn(`Original unit multiplier for "${originalValueStr}" is zero or non-finite (${originalUnitMultiplier.toString()}). Using absolute difference.`);
-                            diffInUnit = diff.abs();
-                        } else {
-                            diffInUnit = diff.abs().div(originalUnitMultiplier);
-                        }
-
-                        const isIntegerComparison = originalDecimal.isInteger() && systemCalculatedDecimal.isInteger();
-                        
-                        const diffFormatted = diffInUnit.isFinite()
-                                              ? (isIntegerComparison ? diffInUnit.toFixed(0) : diffInUnit.toFixed(2))
-                                              : diffInUnit.toString();
-
-                        const originalValueUnit = originalValueStr.replace(/[\d.,()\-△▲＋¥\s]/g, '').trim() || '単位';
-
-                        const tolerancePercentage = new Decimal('0.01'); 
-                        const toleranceAbsoluteInBaseUnits = new Decimal('1'); 
-                                                                    
-                        const isPercentageComparison = result.valueType && (result.valueType.includes('パーセント') || result.valueType.includes('率'));
-                        let withinTolerance = false;
-
-                        if (isPercentageComparison) {
-                            withinTolerance = diff.abs().lte(new Decimal('0.01')); // 1 percentage point tolerance for percentages
-                            const originalPercentValStr = safeFormatToPercentageString(originalDecimal);
-                            const calculatedPercentValStr = safeFormatToPercentageString(systemCalculatedDecimal);
-                            const diffAbsPercentPointsStr = safeFormatToPercentageString(diff.abs(), 2); // Use 2 decimal places for the difference in pp
-
-                            systemValidationMessage += `システム検証: レポート記載値 (${originalPercentValStr}%) と計算値 (${calculatedPercentValStr}%) の差は ${diffAbsPercentPointsStr} パーセントポイントです。`;
-                        } else {
-                            const absoluteDiffInOriginalScale = diff.abs();
-                            const scaledAbsoluteTolerance = toleranceAbsoluteInBaseUnits.mul(originalUnitMultiplier);
-
-                            if (originalDecimal.isZero()) { 
-                                withinTolerance = absoluteDiffInOriginalScale.lte(scaledAbsoluteTolerance);
-                                let calcValueInUnitStr = "計算不能";
-                                if (systemCalculatedDecimal.isFinite() && originalUnitMultiplier.isFinite() && !originalUnitMultiplier.isZero()) {
-                                   calcValueInUnitStr = systemCalculatedDecimal.div(originalUnitMultiplier).toString();
-                                } else if (systemCalculatedDecimal.isFinite()) {
-                                   calcValueInUnitStr = systemCalculatedDecimal.toString(); 
-                                }
-                                systemValidationMessage += `システム検証: レポート記載値は0、計算値は ${calcValueInUnitStr} ${originalValueUnit}。差額は ${diffFormatted} ${originalValueUnit}です。`;
-                            } else {
-                                const relativeDifference = absoluteDiffInOriginalScale.div(originalDecimal.abs());
-                                withinTolerance = relativeDifference.lte(tolerancePercentage) || absoluteDiffInOriginalScale.lte(scaledAbsoluteTolerance);
-
-                                let formattedRelativeDiffForDisplay: string;
-                                if (relativeDifference.isFinite()) {
-                                    formattedRelativeDiffForDisplay = relativeDifference.mul(100).toDecimalPlaces(2).toString() + "%";
-                                } else {
-                                    formattedRelativeDiffForDisplay = relativeDifference.toString();
-                                }
-                                systemValidationMessage += `システム検証: 差額 ${diffFormatted} ${originalValueUnit} (相対差 ${formattedRelativeDiffForDisplay}). `;
-                            }
-                        }
-
-                        if (withinTolerance) {
-                            result.status = AnalysisStatus.MinorError; 
-                            systemValidationMessage += "この差は許容範囲内です。";
-                        } else {
-                            result.status = AnalysisStatus.Error;
-                            systemValidationMessage += "この差は許容範囲を超えています。";
-                        }
-                    } else {
-                         systemValidationMessage += "システム検証: レポート記載値の数値解釈に失敗したため、比較できませんでした。";
-                         result.status = AnalysisStatus.Attention;
-                    }
-                  } else if (systemValidationMessage && !systemValidationMessage.includes("ゼロによる除算")) { 
-                     systemValidationMessage += "AIが指定した計算を実行できませんでした。";
-                     result.status = AnalysisStatus.Attention; 
-                  }
-              } catch (calcError: any) {
-                  console.error("System calculation error:", calcError);
-                  systemValidationMessage += `システム計算エラー: ${calcError.message}.`;
+                } else if (decimalOperands.length >= 2 && decimalOperands[1].isZero()) {
+                  systemValidationMessage += "システムエラー: ゼロによる除算が試みられました。";
                   result.status = AnalysisStatus.Error;
+                }
+                break;
+              default:
+                systemValidationMessage += `未対応の計算操作: ${rawResult.calculationOperation}。`;
+            }
+
+            if (systemCalculatedDecimal !== null) {
+              systemCalculatedValueString = systemCalculatedDecimal.toString();
+              result.calculatedValue = systemCalculatedValueString;
+
+              const originalDecimal = parseFinancialNumber(rawResult.originalValue);
+
+              if (originalDecimal) {
+                const diff = originalDecimal.minus(systemCalculatedDecimal);
+                const originalValueStr = String(rawResult.originalValue || '');
+                const originalUnitMultiplier = getUnitMultiplierFromString(originalValueStr);
+
+                let diffInUnit: Decimal;
+                if (originalUnitMultiplier.isZero() || !originalUnitMultiplier.isFinite()) {
+                  console.warn(`Original unit multiplier for "${originalValueStr}" is zero or non-finite (${originalUnitMultiplier.toString()}). Using absolute difference.`);
+                  diffInUnit = diff.abs();
+                } else {
+                  diffInUnit = diff.abs().div(originalUnitMultiplier);
+                }
+
+                const isIntegerComparison = originalDecimal.isInteger() && systemCalculatedDecimal.isInteger();
+
+                const diffFormatted = diffInUnit.isFinite()
+                  ? (isIntegerComparison ? diffInUnit.toFixed(0) : diffInUnit.toFixed(2))
+                  : diffInUnit.toString();
+
+                const originalValueUnit = originalValueStr.replace(/[\d.,()\-△▲＋¥\s]/g, '').trim() || '単位';
+
+                const tolerancePercentage = new Decimal('0.01');
+                const toleranceAbsoluteInBaseUnits = new Decimal('1');
+
+                const isPercentageComparison = result.valueType && (result.valueType.includes('パーセント') || result.valueType.includes('率'));
+                let withinTolerance = false;
+
+                if (isPercentageComparison) {
+                  withinTolerance = diff.abs().lte(new Decimal('0.01')); // 1 percentage point tolerance for percentages
+                  const originalPercentValStr = safeFormatToPercentageString(originalDecimal);
+                  const calculatedPercentValStr = safeFormatToPercentageString(systemCalculatedDecimal);
+                  const diffAbsPercentPointsStr = safeFormatToPercentageString(diff.abs(), 2); // Use 2 decimal places for the difference in pp
+
+                  systemValidationMessage += `システム検証: レポート記載値 (${originalPercentValStr}%) と計算値 (${calculatedPercentValStr}%) の差は ${diffAbsPercentPointsStr} パーセントポイントです。`;
+                } else {
+                  const absoluteDiffInOriginalScale = diff.abs();
+                  const scaledAbsoluteTolerance = toleranceAbsoluteInBaseUnits.mul(originalUnitMultiplier);
+
+                  if (originalDecimal.isZero()) {
+                    withinTolerance = absoluteDiffInOriginalScale.lte(scaledAbsoluteTolerance);
+                    let calcValueInUnitStr = "計算不能";
+                    if (systemCalculatedDecimal.isFinite() && originalUnitMultiplier.isFinite() && !originalUnitMultiplier.isZero()) {
+                      calcValueInUnitStr = systemCalculatedDecimal.div(originalUnitMultiplier).toString();
+                    } else if (systemCalculatedDecimal.isFinite()) {
+                      calcValueInUnitStr = systemCalculatedDecimal.toString();
+                    }
+                    systemValidationMessage += `システム検証: レポート記載値は0、計算値は ${calcValueInUnitStr} ${originalValueUnit}。差額は ${diffFormatted} ${originalValueUnit}です。`;
+                  } else {
+                    const relativeDifference = absoluteDiffInOriginalScale.div(originalDecimal.abs());
+                    withinTolerance = relativeDifference.lte(tolerancePercentage) || absoluteDiffInOriginalScale.lte(scaledAbsoluteTolerance);
+
+                    let formattedRelativeDiffForDisplay: string;
+                    if (relativeDifference.isFinite()) {
+                      formattedRelativeDiffForDisplay = relativeDifference.mul(100).toDecimalPlaces(2).toString() + "%";
+                    } else {
+                      formattedRelativeDiffForDisplay = relativeDifference.toString();
+                    }
+                    systemValidationMessage += `システム検証: 差額 ${diffFormatted} ${originalValueUnit} (相対差 ${formattedRelativeDiffForDisplay}). `;
+                  }
+                }
+
+                if (withinTolerance) {
+                  result.status = AnalysisStatus.MinorError;
+                  systemValidationMessage += "この差は許容範囲内です。";
+                } else {
+                  result.status = AnalysisStatus.Error;
+                  systemValidationMessage += "この差は許容範囲を超えています。";
+                }
+              } else {
+                systemValidationMessage += "システム検証: レポート記載値の数値解釈に失敗したため、比較できませんでした。";
+                result.status = AnalysisStatus.Attention;
               }
-          } else {
-              systemValidationMessage = "システム検証: AIが抽出したオペランドの一部または全部を数値として解釈できませんでした。";
+            } else if (systemValidationMessage && !systemValidationMessage.includes("ゼロによる除算")) {
+              systemValidationMessage += "AIが指定した計算を実行できませんでした。";
               result.status = AnalysisStatus.Attention;
+            }
+          } catch (calcError: any) {
+            console.error("System calculation error:", calcError);
+            systemValidationMessage += `システム計算エラー: ${calcError.message}.`;
+            result.status = AnalysisStatus.Error;
           }
-          const currentAiCommentFromRaw: string | undefined = rawResult['aiComment'];
-          result.aiComment = (currentAiCommentFromRaw ? currentAiCommentFromRaw + "\n---\n" : "") +
-                             (operationPerformed ? `実行された計算: ${operationPerformed}\n` : "") +
-                             systemValidationMessage;
+        } else {
+          systemValidationMessage = "システム検証: AIが抽出したオペランドの一部または全部を数値として解釈できませんでした。";
+          result.status = AnalysisStatus.Attention;
+        }
+        const currentAiCommentFromRaw: string | undefined = rawResult['aiComment'];
+        result.aiComment = (currentAiCommentFromRaw ? currentAiCommentFromRaw + "\n---\n" : "") +
+          (operationPerformed ? `実行された計算: ${operationPerformed}\n` : "") +
+          systemValidationMessage;
       }
       return result;
     });
@@ -550,29 +550,29 @@ export async function* analyzeFinancialData(
     console.error("Error in analyzeFinancialData:", error);
     let detailedMessage = "AIによる財務データ分析中に予期せぬエラーが発生しました。";
     if (error.message) {
-        detailedMessage += `エラー詳細: ${error.message}`;
+      detailedMessage += `エラー詳細: ${error.message}`;
     }
     // Access custom properties if they exist from the re-thrown error
     if (error.originalErrorName && error.originalErrorMessage) {
-        detailedMessage += `根本原因(${error.originalErrorName}): ${error.originalErrorMessage}`;
+      detailedMessage += `根本原因(${error.originalErrorName}): ${error.originalErrorMessage}`;
     }
     if (error.stringAttemptedToParse) { // For easier debugging
-        console.error("String that was attempted to be parsed when error occurred:", error.stringAttemptedToParse);
+      console.error("String that was attempted to be parsed when error occurred:", error.stringAttemptedToParse);
     }
 
     yield {
-        type: 'data',
-        results: [{
-            id: 'generic-ai-error',
-            status: AnalysisStatus.Error,
-            message: detailedMessage,
-            page: 0,
-            displayPageNumber: 1,
-            pdfPhysicalPageNumber: 2,
-            pageTitle: "AI分析エラー",
-            itemPath: "AI処理全体",
-            aiComment: error.stack || "スタックトレースなし"
-        }]
+      type: 'data',
+      results: [{
+        id: 'generic-ai-error',
+        status: AnalysisStatus.Error,
+        message: detailedMessage,
+        page: 0,
+        displayPageNumber: 1,
+        pdfPhysicalPageNumber: 2,
+        pageTitle: "AI分析エラー",
+        itemPath: "AI処理全体",
+        aiComment: error.stack || "スタックトレースなし"
+      }]
     };
   }
 }
@@ -583,160 +583,179 @@ export async function* analyzeMonthlyComparison(
   currentPages: PdfPageContent[]
 ): AsyncGenerator<GeminiServiceStream, void, unknown> {
   if (!ai) {
-     console.error("Gemini APIクライアントが初期化されていません (APIキーの問題の可能性があります)。モックエラーを返します。");
-     yield {
-        type: 'data',
-        results: [{
-            id: 'no-api-key-error',
-            status: AnalysisStatus.Error,
-            message: "Gemini APIクライアントが初期化されていません。APIキーが正しく設定されているか、上記の警告メッセージを確認してください。",
-            page: 0,
-            displayPageNumber: 1,
-            pdfPhysicalPageNumber: 2,
-            pageTitle: "システムエラー",
-            itemPath: "システム全体",
-            aiComment: "APIキーの設定を確認し、アプリケーションをリロードしてください。"
-        }]
-     };
-     return;
+    console.error("Gemini APIクライアントが初期化されていません (APIキーの問題の可能性があります)。モックエラーを返します。");
+    yield {
+      type: 'data',
+      results: [{
+        id: 'no-api-key-error',
+        status: AnalysisStatus.Error,
+        message: "Gemini APIクライアントが初期化されていません。APIキーが正しく設定されているか、上記の警告メッセージを確認してください。",
+        page: 0,
+        displayPageNumber: 1,
+        pdfPhysicalPageNumber: 2,
+        pageTitle: "システムエラー",
+        itemPath: "システム全体",
+        aiComment: "APIキーの設定を確認し、アプリケーションをリロードしてください。"
+      }]
+    };
+    return;
   }
 
   if (previousPages.length === 0 || currentPages.length === 0) {
     yield {
-        type: 'data',
-        results: [{
-            id: 'no-pages-to-compare',
-            status: AnalysisStatus.Attention,
-            message: "比較対象のページコンテンツが不足しています。前月と当月の両方のPDFが2ページ以上あることを確認してください。",
-            page: 0,
-            displayPageNumber: 1,
-            pdfPhysicalPageNumber: 2,
-            pageTitle: "データ不足",
-            itemPath: "入力データ",
-            aiComment: "前月と当月のPDFの2ページ目以降が分析対象となります。"
-        }]
+      type: 'data',
+      results: [{
+        id: 'no-pages-to-compare',
+        status: AnalysisStatus.Attention,
+        message: "比較対象のページコンテンツが不足しています。前月と当月の両方のPDFが2ページ以上あることを確認してください。",
+        page: 0,
+        displayPageNumber: 1,
+        pdfPhysicalPageNumber: 2,
+        pageTitle: "データ不足",
+        itemPath: "入力データ",
+        aiComment: "前月と当月のPDFの2ページ目以降が分析対象となります。"
+      }]
     };
     return;
   }
 
   const model = ai.models;
-  
+
   // 前月と当月のデータを整理
-  const previousContent = previousPages.map(p => 
+  const previousContent = previousPages.map(p =>
     `前月データ ページ ${p.pageNumber} (PDF実P.${p.physicalPageNumber}, 表示P.${p.pageNumber + 1}):\n${p.content}`
   ).join("\n\n---\n\n");
-  
-  const currentContent = currentPages.map(p => 
+
+  const currentContent = currentPages.map(p =>
     `当月データ ページ ${p.pageNumber} (PDF実P.${p.physicalPageNumber}, 表示P.${p.pageNumber + 1}):\n${p.content}`
   ).join("\n\n---\n\n");
 
-  const prompt = `
-    あなたは高精度な財務レポート前月比較分析アシスタントです。前月のコメントあり版レポートと当月のコメントなし版レポートを比較し、ページタイトルごとに前月の文量や観点に合わせてコメントを生成してください。
-
-    **【レポートの特徴】:**
-    - 約20ページの財務レポート（損益計算書、貸借対照表、キャッシュフロー計算書など）
-    - 各ページに詳細な数値データとコメントが記載
-    - 前月のコメント文体、文量、観点を参考にしたコメント生成
-    - ページタイトルごとの特性を考慮した分析
-
-    **【分析観点】:**
-    1. **同軸比較**: 同じ項目の数値変化を分析（例：売上高の前月比変化）
-    2. **異軸比較**: 関連する異なる項目間の変化を分析（例：売上高と営業利益の関係）
-    3. **新規項目**: 当月に新たに追加された項目の分析
-    4. **削除項目**: 前月にあったが当月に削除された項目の分析
-    5. **累計推移**: 当月分追加後の累計値の変化分析
-
-    **【コメント生成方針】:**
-    - 前月のコメントの文量、文体、観点を詳細に分析し、それに合わせてコメントを生成
-    - ページタイトルごとの特性（損益計算書、貸借対照表など）を考慮
-    - 前月のコメントで言及されている項目や観点を優先的に分析
-    - 数値の変化率や変化額を具体的に示す
-    - 前月のコメントと同じレベルの詳細さで記述
-    - 変化の要因や背景を推測してコメントに含める
-    - 重要度（高・中・低）を適切に判定
-
-    **【ページタイトル別の特徴】:**
-    - **損益計算書**: 売上、費用、利益の詳細分析、利益率の変化
-    - **貸借対照表**: 資産、負債、純資産の構成変化、流動性分析
-    - **キャッシュフロー計算書**: 営業、投資、財務キャッシュフローの分析
-    - **その他**: 各ページの特性に応じた分析観点
-
-    **分析結果のJSON形式:**
-    各比較項目はJSONオブジェクトの配列で、以下のキーを含めてください。
-
-    [
-      {
-        "page": 0,
-        "pageTitle": "損益計算書(1/2)",
-        "comparisonType": "同軸比較",
-        "itemPath": "売上高 > ラボ",
-        "currentValue": "18,010千円",
-        "previousValue": "19,500千円",
-        "changeAmount": "-1,490千円",
-        "changePercentage": "-7.6%",
-        "comment": "ラボ売上高は前月比で1,490千円（7.6%）減少しました。",
-        "generatedComment": "ラボ売上高は前月比で1,490千円（7.6%）減少しました。Miracle Fit IおよびMiracle Fit Vの販売数量減少が主因ですが、単価の上昇により前年同月比では増加しています。季節的な需要変動の影響も考慮する必要があります。",
-        "reasoning": "同軸比較: 売上高の減少率が5%を超えており、重要な変化として判断。前月のコメントで言及されているMiracle Fit製品の動向を踏まえた分析を実施。",
-        "significance": "高",
-        "category": "売上"
-      }
-    ]
-
-    **各フィールドの説明:**
-    - "page": 該当ページの番号 (0始まり)
-    - "pageTitle": 該当ページの主要タイトル（例: "損益計算書(1/2)"）
-    - "comparisonType": "同軸比較"、"異軸比較"、"新規項目"、"削除項目"、"累計推移"のいずれか
-    - "itemPath": 比較対象項目のパス（例: "売上高 > ラボ"）
-    - "currentValue": 当月の数値
-    - "previousValue": 前月の数値
-    - "changeAmount": 変化額（+1,490千円、-500千円など）
-    - "changePercentage": 変化率（+7.6%、-5.2%など）
-    - "comment": 基本的な変化の記述
-    - "generatedComment": AI生成された詳細なコメント（前月の文量・観点に合わせた記述）
-    - "reasoning": AIの判断理由
-    - "significance": "高"、"中"、"低"のいずれか
-    - "category": "売上"、"利益"、"費用"、"資産"、"負債"、"その他"のいずれか
-
-    **前月データ（コメントあり版）:**
-    ${previousContent}
-
-    **当月データ（コメントなし版）:**
-    ${currentContent}
-
-    上記データに基づき、前月と当月の数値変化を分析し、ページタイトルごとに前月の文量や観点に合わせた適切なコメントを生成してください。前月のコメントで言及されている項目や観点を優先的に分析し、同じレベルの詳細さで記述してください。
+  const prompt = `\r
+    あなたは高精度な財務レポート前月比較分析アシスタントです。前月のコメントあり版レポートと当月のコメントなし版レポートを比較し、ページタイトルごとに前月の文量や観点に合わせてコメントを生成してください。\r
+\r
+    **【レポートの特徴】:**\r
+    - 約20ページの財務レポート（損益計算書、貸借対照表、キャッシュフロー計算書など）\r
+    - 各ページに詳細な数値データとコメントが記載\r
+    - 前月のコメント文体、文量、観点を参考にしたコメント生成\r
+    - ページタイトルごとの特性を考慮した分析\r
+\r
+    **【分析観点】:**\r
+    1. **同軸比較**: 同じ項目の数値変化を分析（例：売上高の前月比変化）\r
+    2. **異軸比較**: 関連する異なる項目間の変化を分析（例：売上高と営業利益の関係）\r
+    3. **新規項目**: 当月に新たに追加された項目の分析\r
+    4. **削除項目**: 前月にあったが当月に削除された項目の分析\r
+    5. **累計推移**: 当月分追加後の累計値の変化分析\r
+\r
+    **【コメント生成方針】:**\r
+    - 前月のコメントの文量、文体、観点を詳細に分析し、それに合わせてコメントを生成\r
+    - ページタイトルごとの特性（損益計算書、貸借対照表など）を考慮\r
+    - 前月のコメントで言及されている項目や観点を優先的に分析\r
+    - 数値の変化率や変化額を具体的に示す\r
+    - 前月のコメントと同じレベルの詳細さで記述\r
+    - 重要度（高・中・低）を適切に判定\r
+\r
+    **【表現ルール - 抽象的な形容表現の禁止】:**\r
+    - 金額や数量の増減、比率の上下について、抽象的な形容表現を使用しない\r
+    - 禁止表現: 著しく、僅かに、おおむね、概ね、大幅に、微増、微減、横ばい、やや、若干、顕著に、急激に、緩やかに\r
+    - 代わりに具体的な数値（金額・変化率・個数など）で変動を表現する\r
+\r
+    **【変動要因の記載ルール - 80%カバー】:**\r
+    - 全体の変動に対する寄与度を計算し、累計で80%に達するまでの要因のみ言及する\r
+    - 寄与度の小さい要因は省略する\r
+    - 例1）要因Aが80%、要因Bが20%寄与 → 要因Aのみに言及\r
+    - 例2）要因Aが50%、要因Bが40%、要因Cが10%寄与 → 要因A、Bのみに言及\r
+\r
+    **【要因分析ルール - 推測の禁止】:**\r
+    - 変動の要因はチャート・表・データから直接読み取れる事実のみを記載する\r
+    - 季節要因、市場動向、需要変動など、データに明示されていない推測的な要因分析は行わない\r
+    - データから原因が特定できない場合は「要因は担当者に確認が必要」と記載する\r
+\r
+    **【表記ルール - 半角・全角の一致】:**\r
+    - 前月レポートやデータ中の固有名詞・商品名・コード名の表記（半角カタカナ、半角括弧等）をそのまま維持する\r
+    - 勝手に半角を全角に変換しない\r
+\r
+    **【ページタイトル別の特徴】:**\r
+    - **損益計算書**: 売上、費用、利益の詳細分析、利益率の変化\r
+    - **貸借対照表**: 資産、負債、純資産の構成変化、流動性分析\r
+    - **キャッシュフロー計算書**: 営業、投資、財務キャッシュフローの分析\r
+    - **その他**: 各ページの特性に応じた分析観点\r
+\r
+    **分析結果のJSON形式:**\r
+    各比較項目はJSONオブジェクトの配列で、以下のキーを含めてください。\r
+\r
+    [\r
+      {\r
+        "page": 0,\r
+        "pageTitle": "損益計算書(1/2)",\r
+        "comparisonType": "同軸比較",\r
+        "itemPath": "売上高 > ラボ",\r
+        "currentValue": "18,010千円",\r
+        "previousValue": "19,500千円",\r
+        "changeAmount": "-1,490千円",\r
+        "changePercentage": "-7.6%",\r
+        "comment": "ラボ売上高は前月比で1,490千円（7.6%）減少しました。",\r
+        "generatedComment": "ラボ売上高は前月比で1,490千円（7.6%）減少しました。ﾐﾗｸﾙﾌｨｯﾄ Iおよびﾐﾗｸﾙﾌｨｯﾄ Vの販売数量がそれぞれ150個、80個減少したことが主因です。",\r
+        "reasoning": "同軸比較: 売上高の減少率が5%を超えており、重要な変化として判断。内訳データから販売数量の減少が確認できたため記載。",\r
+        "significance": "高",\r
+        "category": "売上"\r
+      }\r
+    ]\r
+\r
+    **各フィールドの説明:**\r
+    - "page": 該当ページの番号 (0始まり)\r
+    - "pageTitle": 該当ページの主要タイトル（例: "損益計算書(1/2)"）\r
+    - "comparisonType": "同軸比較"、"異軸比較"、"新規項目"、"削除項目"、"累計推移"のいずれか\r
+    - "itemPath": 比較対象項目のパス（例: "売上高 > ラボ"）\r
+    - "currentValue": 当月の数値\r
+    - "previousValue": 前月の数値\r
+    - "changeAmount": 変化額（+1,490千円、-500千円など）\r
+    - "changePercentage": 変化率（+7.6%、-5.2%など）\r
+    - "comment": 基本的な変化の記述\r
+    - "generatedComment": AI生成された詳細なコメント（前月の文量・観点に合わせた記述。データから読み取れる事実のみ記載）\r
+    - "reasoning": AIの判断理由\r
+    - "significance": "高"、"中"、"低"のいずれか\r
+    - "category": "売上"、"利益"、"費用"、"資産"、"負債"、"その他"のいずれか\r
+\r
+    **前月データ（コメントあり版）:**\r
+    ${previousContent}\r
+\r
+    **当月データ（コメントなし版）:**\r
+    ${currentContent}\r
+\r
+    上記データに基づき、前月と当月の数値変化を分析し、ページタイトルごとに前月の文量や観点に合わせた適切なコメントを生成してください。前月のコメントで言及されている項目や観点を優先的に分析し、同じレベルの詳細さで記述してください。変動要因はデータから読み取れる事実のみを記載し、推測は行わないでください。\r
     `;
 
   try {
     yield { type: 'progress', message: '前月比較分析を実行中です。数値の変化を分析してコメントを生成しています...' };
-    
+
     const response: GenerateContentResponse = await model.generateContent({
-        model: "gemini-2.5-pro",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            temperature: 0.1,
-            topK: 40,
-            topP: 0.95,
-        },
+      model: "gemini-2.5-pro",
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        temperature: 0.1,
+        topK: 40,
+        topP: 0.95,
+      },
     });
 
     if (!response) {
-        console.error("AIから応答がありません (null または undefined)。");
-        throw new Error("AIから有効な応答が返されませんでした。");
+      console.error("AIから応答がありません (null または undefined)。");
+      throw new Error("AIから有効な応答が返されませんでした。");
     }
 
     const responseTextValue = response.text;
 
     if (typeof responseTextValue !== 'string') {
-        console.error(
-            "AI応答の'text'プロパティが文字列ではありませんでした。",
-            "タイプ:", typeof responseTextValue,
-            "値:", responseTextValue,
-            "応答全体:", response
-        );
-        throw new Error(`AI応答のテキスト部分を解析できませんでした (予期しない型: ${typeof responseTextValue})。SDKのバージョンや応答内容を確認してください。`);
+      console.error(
+        "AI応答の'text'プロパティが文字列ではありませんでした。",
+        "タイプ:", typeof responseTextValue,
+        "値:", responseTextValue,
+        "応答全体:", response
+      );
+      throw new Error(`AI応答のテキスト部分を解析できませんでした (予期しない型: ${typeof responseTextValue})。SDKのバージョンや応答内容を確認してください。`);
     }
-    
+
     yield { type: 'progress', message: 'AIからの前月比較分析結果(JSON)を受信しました。内容を検証・整形しています...' };
 
     let jsonStrForParsing = responseTextValue.trim();
@@ -748,41 +767,41 @@ export async function* analyzeMonthlyComparison(
 
     let parsedJson: any;
     try {
-        parsedJson = JSON.parse(jsonStrForParsing);
+      parsedJson = JSON.parse(jsonStrForParsing);
 
-        if (typeof parsedJson === 'string') {
-            console.warn("AI response was initially parsed into a string. Attempting to parse this string as JSON. String content for second parse attempt:", parsedJson);
-            jsonStrForParsing = parsedJson;
-            parsedJson = JSON.parse(jsonStrForParsing);
-        }
+      if (typeof parsedJson === 'string') {
+        console.warn("AI response was initially parsed into a string. Attempting to parse this string as JSON. String content for second parse attempt:", parsedJson);
+        jsonStrForParsing = parsedJson;
+        parsedJson = JSON.parse(jsonStrForParsing);
+      }
     } catch (e) {
-        const error = e as Error;
-        console.error("JSON.parse failed. String content that failed parsing:", `>>>${jsonStrForParsing}<<<`, "Error Name:", error.name, "Error Message:", error.message, "Stack:", error.stack);
-        
-        let errorMessage = "AIでの前月比較分析に失敗しました。AIの応答形式が正しくない可能性があります。";
-        errorMessage += ` 詳細: ${error.message}.`;
-        
-        if (error.message.toLowerCase().includes("unexpected token") || 
-            error.message.toLowerCase().includes("unterminated string") || 
-            error.message.toLowerCase().includes("expected") && jsonStrForParsing.length > 0) {
-            
-            const errorPosMatch = error.message.match(/position\s+(\d+)/);
-            let errorSnippet = "";
-            if (errorPosMatch && errorPosMatch[1]) {
-                const pos = parseInt(errorPosMatch[1], 10);
-                const start = Math.max(0, pos - 50);
-                const end = Math.min(jsonStrForParsing.length, pos + 50);
-                errorSnippet = `...${jsonStrForParsing.substring(start, end)}...`;
-            } else {
-                errorSnippet = jsonStrForParsing.substring(0, Math.min(150, jsonStrForParsing.length));
-            }
-            errorMessage += ` 応答データ(エラー箇所周辺または冒頭): ${errorSnippet}`;
+      const error = e as Error;
+      console.error("JSON.parse failed. String content that failed parsing:", `>>>${jsonStrForParsing}<<<`, "Error Name:", error.name, "Error Message:", error.message, "Stack:", error.stack);
+
+      let errorMessage = "AIでの前月比較分析に失敗しました。AIの応答形式が正しくない可能性があります。";
+      errorMessage += ` 詳細: ${error.message}.`;
+
+      if (error.message.toLowerCase().includes("unexpected token") ||
+        error.message.toLowerCase().includes("unterminated string") ||
+        error.message.toLowerCase().includes("expected") && jsonStrForParsing.length > 0) {
+
+        const errorPosMatch = error.message.match(/position\s+(\d+)/);
+        let errorSnippet = "";
+        if (errorPosMatch && errorPosMatch[1]) {
+          const pos = parseInt(errorPosMatch[1], 10);
+          const start = Math.max(0, pos - 50);
+          const end = Math.min(jsonStrForParsing.length, pos + 50);
+          errorSnippet = `...${jsonStrForParsing.substring(start, end)}...`;
+        } else {
+          errorSnippet = jsonStrForParsing.substring(0, Math.min(150, jsonStrForParsing.length));
         }
-        const finalError = new Error(errorMessage);
-        (finalError as any).originalErrorName = error.name;
-        (finalError as any).originalErrorMessage = error.message;
-        (finalError as any).stringAttemptedToParse = jsonStrForParsing;
-        throw finalError;
+        errorMessage += ` 応答データ(エラー箇所周辺または冒頭): ${errorSnippet}`;
+      }
+      const finalError = new Error(errorMessage);
+      (finalError as any).originalErrorName = error.name;
+      (finalError as any).originalErrorMessage = error.message;
+      (finalError as any).stringAttemptedToParse = jsonStrForParsing;
+      throw finalError;
     }
 
     const rawResults = (Array.isArray(parsedJson) ? parsedJson : []) as Array<any>;
@@ -815,28 +834,28 @@ export async function* analyzeMonthlyComparison(
     console.error("Error in analyzeMonthlyComparison:", error);
     let detailedMessage = "AIによる前月比較分析中に予期せぬエラーが発生しました。";
     if (error.message) {
-        detailedMessage += `エラー詳細: ${error.message}`;
+      detailedMessage += `エラー詳細: ${error.message}`;
     }
     if (error.originalErrorName && error.originalErrorMessage) {
-        detailedMessage += `根本原因(${error.originalErrorName}): ${error.originalErrorMessage}`;
+      detailedMessage += `根本原因(${error.originalErrorName}): ${error.originalErrorMessage}`;
     }
     if (error.stringAttemptedToParse) {
-        console.error("String that was attempted to be parsed when error occurred:", error.stringAttemptedToParse);
+      console.error("String that was attempted to be parsed when error occurred:", error.stringAttemptedToParse);
     }
 
     yield {
-        type: 'data',
-        results: [{
-            id: 'monthly-comparison-error',
-            status: AnalysisStatus.Error,
-            message: detailedMessage,
-            page: 0,
-            displayPageNumber: 1,
-            pdfPhysicalPageNumber: 2,
-            pageTitle: "前月比較分析エラー",
-            itemPath: "AI処理全体",
-            aiComment: error.stack || "スタックトレースなし"
-        }]
+      type: 'data',
+      results: [{
+        id: 'monthly-comparison-error',
+        status: AnalysisStatus.Error,
+        message: detailedMessage,
+        page: 0,
+        displayPageNumber: 1,
+        pdfPhysicalPageNumber: 2,
+        pageTitle: "前月比較分析エラー",
+        itemPath: "AI処理全体",
+        aiComment: error.stack || "スタックトレースなし"
+      }]
     };
   }
 }
