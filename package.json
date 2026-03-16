@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/genai": "^1.45.0",
     "@google/generative-ai": "^0.24.1",
     "@vercel/node": "^5.5.16",
     "pdfjs-dist": "^5.3.31",

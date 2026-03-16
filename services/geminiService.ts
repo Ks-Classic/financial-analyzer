@@ -284,13 +284,13 @@ export async function* analyzeFinancialData(
     yield { type: 'progress', message: 'AIモデルによるレポート全体の分析処理を実行中です。結果生成まで少々お待ちください...' };
 
     const response: GenerateContentResponse = await model.generateContent({
-      model: "gemini-2.5-pro",
+      model: "gemini-3.1-pro-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
-        temperature: 0.1,
-        topK: 40,
-        topP: 0.95,
+        thinkingConfig: {
+          thinkingLevel: "HIGH",
+        },
       },
     });
 
@@ -729,13 +729,13 @@ export async function* analyzeMonthlyComparison(
     yield { type: 'progress', message: '前月比較分析を実行中です。数値の変化を分析してコメントを生成しています...' };
 
     const response: GenerateContentResponse = await model.generateContent({
-      model: "gemini-2.5-pro",
+      model: "gemini-3.1-pro-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
-        temperature: 0.1,
-        topK: 40,
-        topP: 0.95,
+        thinkingConfig: {
+          thinkingLevel: "HIGH",
+        },
       },
     });
 

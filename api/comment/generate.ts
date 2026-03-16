@@ -296,7 +296,7 @@ export default async function handler(
             generationConfig: {
                 responseMimeType: 'application/json',
                 responseSchema: COMMENT_RESPONSE_SCHEMA,
-                temperature: 0.3, // 財務分析は低温で再現性重視
+                // Gemini 3: temperature はデフォルト(1.0)推奨。thinking_level で制御。
             },
         });
 
